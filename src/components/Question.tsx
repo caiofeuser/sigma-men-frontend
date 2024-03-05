@@ -33,7 +33,7 @@ export default function Question(props: QuestionProps) {
         </Heading>
         <IconButton
           // bg="white"
-          color="primary"
+          color="brand.500"
           variant="ghost"
           w="2rem"
           aria-label="Mostrar resposta"

@@ -18,7 +18,7 @@ export default function TreatmentCard(props: { title: string }) {
         style={{
           minHeight: "100%",
           minWidth: "0.5rem",
-          background: "var(--chakra-colors-primary)",
+          background: "var(--chakra-colors-brand-500)",
           borderRadius: "10px",
         }}
       />
@@ -38,7 +38,7 @@ export default function TreatmentCard(props: { title: string }) {
         <Button
           variant="solid"
           color="white"
-          bg="black"
+          colorScheme="black"
           borderRadius="3rem"
           style={{
             width: "100%",
@@ -47,10 +47,9 @@ export default function TreatmentCard(props: { title: string }) {
             marginTop: "1rem",
             minHeight: "3rem",
           }}
-          _hover={{ bg: "#000" }}
           fontSize="1.25rem"
         >
-          <Icon color="primary" as={FaCirclePlus} />
+          <Icon color="brand.500" as={FaCirclePlus} />
           Saiba mais
         </Button>
       </div>

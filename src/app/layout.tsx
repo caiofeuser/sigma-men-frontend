@@ -67,7 +67,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html suppressHydrationWarning={true}>
       <body suppressHydrationWarning={true}>
-        <div className={inter.className}>
+        <div>
           <Providers>
             <Navbar onOpen={onOpen} drawerRef={drawerRef} />
             <Drawer
@@ -84,7 +84,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     <Heading size="md">Tratamentos</Heading>
                     <Flex flexDir="column" mt="1rem">
                       <UnorderedList
-                        color="primary"
+                        color="brand.500"
                         style={{ marginLeft: "2rem" }}
                       >
                         {treatments.map((treatment, index) => (
@@ -100,7 +100,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                     <Heading size="md">Suporte</Heading>
                     <Flex flexDir="column" mt="1rem">
                       <UnorderedList
-                        color="primary"
+                        color="brand.500"
                         style={{ marginLeft: "2rem" }}
                       >
                         {suportLinks.map((treatment, index) => (

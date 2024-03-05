@@ -21,7 +21,7 @@ export default function ProductCard(props: ProductCardProps) {
   };
 
   return (
-    <Box minW="18rem" maxH="100%" bg="secondary" borderRadius="2rem">
+    <Box minW="18rem" maxH="100%" bg="brand.50" borderRadius="2rem">
       <Flex flexDir="column" alignItems="center">
         <Flex width="100%" px={4} mt={4} justifyContent="space-between">
           <Heading
@@ -35,7 +35,7 @@ export default function ProductCard(props: ProductCardProps) {
           </Heading>
           <Flex
             height="2rem"
-            bg="#d5daf9"
+            bg="brand.100"
             borderRadius="2rem"
             px={4}
             alignItems="center"
@@ -51,15 +51,18 @@ export default function ProductCard(props: ProductCardProps) {
           Informação de seguraça
         </Text>
         <Flex my={4} justifyContent="space-evenly" w="100%">
-          <Button bg="white" w="7rem" borderRadius="2rem">
+          <Button
+            bg="white"
+            w="7rem"
+            borderRadius="2rem"
+            _hover={{ bg: "brand.100" }}
+          >
             Saiba Mais
           </Button>
           <Button
             onClick={handleClickProduct}
-            _hover={{ bg: "primaryHover" }}
-            color="white"
             w="7rem"
-            bg="primary"
+            colorScheme="brand"
             borderRadius="2rem"
           >
             Comprar

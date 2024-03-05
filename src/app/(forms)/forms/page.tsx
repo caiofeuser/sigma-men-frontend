@@ -53,14 +53,14 @@ export default function Forms() {
                 h="180px"
                 w="180px"
                 borderRadius="50%"
-                bg="secondary"
+                bg="brand.50"
                 onClick={() =>
                   router.push(`${currentPath}/terms-and-conditions`)
                 }
                 _hover={{
-                  background: "secondaryHover",
+                  background: "brand.100",
                   cursor: "pointer",
-                  transform: "translateY(-2px)",
+                  transform: "translateY(-10px)",
                   transitionDuration: "0.2s",
                   transitionTimingFunction: "ease-in-out",
                 }}

@@ -79,7 +79,7 @@ export default function Home() {
       <Box>
         <Text px={12} fontSize="5xl" mb="0rem" as="b">
           Nossos
-          <span style={{ color: "var(--chakra-colors-primary)" }}>
+          <span style={{ color: "var(--chakra-colors-brand-500)" }}>
             {" "}
             produtos
           </span>
@@ -88,7 +88,7 @@ export default function Home() {
         <Box px={12}>
           <Heading fontSize="5xl" as="b">
             Alguma
-            <span style={{ color: "var(--chakra-colors-primary)" }}>
+            <span style={{ color: "var(--chakra-colors-brand-500)" }}>
               {" "}
               dúvida?
             </span>

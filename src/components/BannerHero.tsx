@@ -29,12 +29,14 @@ export default function BannerHero() {
     },
   ];
   return (
-    <Box bg="secondary">
+    <Box bg="brand.50">
       <div style={{ display: "flex", gap: 8, justifyContent: "space-evenly" }}>
         <div style={{ width: "50%", padding: "3rem 6rem 1rem 6rem" }}>
           <Heading as="b" fontSize="6xl" sx={{ lineHeight: "68px" }}>
             Tratamentos para{" "}
-            <span style={{ color: "var(--chakra-colors-primary)" }}>saúde</span>{" "}
+            <span style={{ color: "var(--chakra-colors-brand-500)" }}>
+              saúde
+            </span>{" "}
             masculina
           </Heading>
           <Text style={{ fontWeight: "300", marginTop: "3rem" }}>
@@ -73,7 +75,7 @@ export default function BannerHero() {
                   minWidth: "4rem",
                   maxHeight: "4rem",
                   maxWidth: "4rem",
-                  background: "var(--chakra-colors-primary)",
+                  background: "var(--chakra-colors-brand-500)",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
@@ -87,7 +89,7 @@ export default function BannerHero() {
                   style={{
                     minHeight: "100%",
                     minWidth: "0.5rem",
-                    background: "var(--chakra-colors-primary)",
+                    background: "var(--chakra-colors-brand-500)",
                     borderRadius: "10px",
                   }}
                 />
@@ -113,15 +115,13 @@ export default function BannerHero() {
       >
         <Button
           color="white"
-          bg="black"
-          _hover={{ bg: "#000" }}
+          colorScheme="black"
           borderRadius={32}
           display="flex"
           gap={8}
           padding="2rem 4rem"
           fontSize="1.25rem"
           onClick={() => router.push("/forms")}
-          // variant="unstyled"
         >
           <Search2Icon />
           Conheça nossos tratamentos

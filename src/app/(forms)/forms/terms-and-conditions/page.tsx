@@ -26,7 +26,7 @@ export default function TermsAndConditions() {
         <Flex justifyContent="center" alignItems="center" m="4rem">
           <ul
             style={{
-              color: "var(--chakra-colors-primary)",
+              color: "var(--chakra-colors-brand-500)",
             }}
           >
             <li style={listStyle}>
@@ -55,6 +55,19 @@ export default function TermsAndConditions() {
               </span>
             </li>
           </ul>
+        </Flex>
+        <Flex justifyContent="center" gap="4rem">
+          <Button
+            borderRadius="2rem"
+            variant="solid"
+            minW="200px"
+            colorScheme="brand"
+          >
+            Eu aceito
+          </Button>
+          <Button borderRadius="2rem" minW="200px">
+            Não aceito
+          </Button>
         </Flex>
       </Flex>
     </Flex>
