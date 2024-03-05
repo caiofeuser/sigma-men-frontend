@@ -27,7 +27,7 @@ export default function Footer() {
       <Grid
         paddingY="5rem"
         paddingX="8rem"
-        bg="black"
+        bg="black.500"
         color="white"
         templateColumns="repeat(3, 1fr)"
         gap={6}
