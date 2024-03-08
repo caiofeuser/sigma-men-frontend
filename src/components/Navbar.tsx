@@ -1,41 +1,76 @@
 ﻿"use client";
-import { HamburgerIcon, AddIcon, WarningIcon } from "@chakra-ui/icons";
+import {
+  HamburgerIcon,
+  AddIcon,
+  MinusIcon,
+  DeleteIcon,
+  WarningIcon,
+} from "@chakra-ui/icons";
 import { Fragment } from "react";
+import { IoMdAddCircle } from "react-icons/io";
 import {
   Avatar,
   IconButton,
   Text,
   Icon,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverBody,
-  PopoverHeader,
-  List,
-  Divider,
-  ListItem,
-  ListIcon,
+  Flex,
+  Menu,
+  MenuList,
+  MenuGroup,
+  MenuDivider,
+  MenuItem,
+  MenuButton,
+  Box,
+  Button,
 } from "@chakra-ui/react";
 import { SlBasket } from "react-icons/sl";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
+import { useState } from "react";
+import MenuBasket from "./MenuBasket";
+// import { useRouter } from "next/router" ;
 
 interface NavbarProps {
   drawerRef: React.RefObject<HTMLButtonElement>;
   onOpen: () => void;
 }
 
+interface basketItems {
+  title: string;
+  total: number;
+  price: number;
+  quantity: number;
+}
+
 export default function Navbar(props: NavbarProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const [basketItems, setBasketItems] = useState([
+    {
+      title: "Produto 1",
+      total: 100,
+      price: 100,
+      quantity: 2,
+    },
+    {
+      title: "Produto 2",
+      total: 200,
+      price: 200,
+      quantity: 1,
+    },
+  ] as basketItems[]);
 
-  const popoverItems = [
+  //@ts-ignore
+  // const TestimonialCard = dynamic(() => import("./TestimonialCard"), {
+  //   ssr: false,
+  // });
+
+  const menuItems = [
     {
       title: "Minha conta",
-      icon: <Icon color="brand.500" h="24px" w="24px" as={MdAccountCircle} />,
+      icon: <Icon color="black.500" h="24px" w="24px" as={MdAccountCircle} />,
       onClick: () => router.push("/profile"),
     },
     {
@@ -43,7 +78,7 @@ export default function Navbar(props: NavbarProps) {
       icon: (
         <Icon
           as={SlBasket}
-          color="brand.500"
+          color="black.500"
           h="24px"
           w="24px"
           style={{ width: "1.5rem" }}
@@ -53,7 +88,7 @@ export default function Navbar(props: NavbarProps) {
     },
     {
       title: "Sair",
-      icon: <Icon h="24px" w="24px" color="brand.500" as={RiLogoutBoxLine} />,
+      icon: <Icon h="24px" w="24px" color="black.500" as={RiLogoutBoxLine} />,
       onClick: () => router.push("/logout"),
     },
   ];
@@ -65,6 +100,7 @@ export default function Navbar(props: NavbarProps) {
         justifyContent: "space-between",
         padding: "1rem",
       }}
+      suppressHydrationWarning
     >
       <div
         style={{
@@ -101,7 +137,13 @@ export default function Navbar(props: NavbarProps) {
           cursor: "pointer",
         }}
       >
-        <Image src="/logo.png" width={185} height={185} alt="logo" />
+        <Image
+          src="/logo.png"
+          priority={true}
+          width={185}
+          height={185}
+          alt="logo"
+        />
       </div>
       <div
         style={{
@@ -112,53 +154,50 @@ export default function Navbar(props: NavbarProps) {
           gap: "2rem",
         }}
       >
-        <IconButton
-          aria-label="Open basket"
-          isRound={true}
-          variant="ghost"
-          color="black"
-          icon={<SlBasket size="24" style={{ width: "1.5rem" }} />}
-        />
-        <Popover>
-          <PopoverTrigger>
-            <Avatar
-              cursor="pointer"
-              margin={1}
-              color="black"
-              size="sm"
-              name="Dan Abrahmov"
-              src="https://bit.ly/dan-abramov"
-            />
-          </PopoverTrigger>
-          <PopoverContent>
-            <PopoverHeader fontWeight="semibold">Olá, Dan!</PopoverHeader>
-            <PopoverArrow />
-            <PopoverCloseButton />
-            <PopoverBody>
-              <List>
-                {popoverItems.map((item) => (
+        {pathname === "/login" ||
+        pathname === "/register" ||
+        pathname === "/forgot-password" ? null : (
+          <>
+            <MenuBasket />
+            <Menu>
+              <MenuButton>
+                <Avatar
+                  cursor="pointer"
+                  margin={1}
+                  color="black"
+                  size="sm"
+                  name="Dan Abrahmov"
+                  src="https://bit.ly/dan-abramov"
+                />
+              </MenuButton>
+              <MenuList>
+                <MenuGroup fontWeight="semibold" title="Perfil" />
+                {menuItems.map((item) => (
                   <Fragment key={item.title}>
-                    <ListItem
-                      _hover={{ background: "brand.50" }}
-                      borderRadius="1rem"
+                    <MenuItem
+                      _hover={{ bg: "gray.100" }}
+                      icon={item.icon}
                       cursor="pointer"
-                      display="flex"
-                      alignItems="center"
                       onClick={item.onClick}
-                      justifyContent="flex-start"
-                      gap="1rem"
-                      padding="1rem 1rem 1rem 0.5rem"
+                      py={2}
                     >
-                      {item.icon}
                       {item.title}
-                    </ListItem>
-                    <Divider />
+                    </MenuItem>
                   </Fragment>
                 ))}
-              </List>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
+                <MenuGroup title="Ajuda">
+                  <MenuDivider />
+                  <MenuItem
+                    icon={<WarningIcon h="18px" w="18px" />}
+                    onClick={() => router.push("/help")}
+                  >
+                    Ajuda
+                  </MenuItem>
+                </MenuGroup>
+              </MenuList>
+            </Menu>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -105,3 +105,25 @@ a {
     color-scheme: dark;
   }
 }
+
+.carrosel::-webkit-scrollbar {
+  scrollbar-width: thin;
+}
+
+.carrosel::-webkit-scrollbar-track {
+  background: none;
+}
+.carrosel::-webkit-scrollbar-thumb {
+  background: var(--chakra-colors-beige);
+  border-radius: 10px;
+}
+
+.carrosel::-webkit-scrollbar-thumb:hover {
+  background: var(--chakra-colors-brand-50);
+}
+
+::-webkit-calendar-picker-indicator {
+  /* background-color: red; */
+  /* color: blue; */
+  filter: invert(1);
+}
