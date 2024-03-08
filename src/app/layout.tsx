@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { RiLogoutCircleFill } from "react-icons/ri";
 import { Providers } from "./providers";
 import { useRef } from "react";
 import {
@@ -24,6 +25,8 @@ import {
   Divider,
   Avatar,
 } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { on } from "events";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -38,6 +41,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   const drawerRef = useRef(null);
+  const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const treatments = [
@@ -52,17 +56,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
     { title: "FAQ" },
     { title: "Contatos" },
   ];
-  // <!DOCTYPE html>
-  // <html lang="en">
-  // <head>
-  //   <meta charset="UTF-8" />
-  //   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  //   <title>Document</title>
-  // </head>
-  // <body>
-
-  // </body>
-  // </html>
 
   return (
     <html suppressHydrationWarning={true}>
@@ -114,15 +107,36 @@ export default function RootLayout({ children }: RootLayoutProps) {
                 </DrawerBody>
 
                 <DrawerFooter>
-                  <Flex alignItems="center" justifyContent="center" gap="1rem">
-                    <Text as="b">Sua conta, Usuário</Text>
-                    <Avatar
-                      margin={1}
-                      color="black"
-                      size="sm"
-                      name="Dan Abrahmov"
-                      src="https://bit.ly/dan-abramov"
-                    />
+                  <Flex flexDir="column" rowGap="1rem">
+                    <Flex
+                      alignItems="center"
+                      justifyContent="center"
+                      gap="1rem"
+                    >
+                      <Text as="b">Sua conta, Usuário</Text>
+                      <Avatar
+                        margin={1}
+                        mr="1rem"
+                        color="black"
+                        size="sm"
+                        name="Dan Abrahmov"
+                        src="https://bit.ly/dan-abramov"
+                      />
+                    </Flex>
+                    <Box textAlign="right">
+                      <Button
+                        colorScheme="brand"
+                        onClick={() => {
+                          router.push("/login");
+                          onClose();
+                        }}
+                        leftIcon={<RiLogoutCircleFill />}
+                        rounded="full"
+                        variant="ghost"
+                      >
+                        Sair
+                      </Button>
+                    </Box>
                   </Flex>
                 </DrawerFooter>
               </DrawerContent>

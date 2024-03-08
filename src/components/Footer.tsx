@@ -14,13 +14,24 @@ export default function Footer() {
   ];
 
   const contact = [
-    { name: "Telefone", href: "google.com", icon: <PhoneIcon /> },
+    {
+      name: "Telefone",
+      href: "google.com",
+      icon: <PhoneIcon />,
+      content: "(47) 3555-2345",
+    },
     {
       name: "Instagram",
       href: "https://www.instagram.com",
       icon: <Icon as={AiFillInstagram} />,
+      content: "@instagram",
     },
-    { name: "E-mail", href: "google.com", icon: <AtSignIcon /> },
+    {
+      name: "E-mail",
+      href: "google.com",
+      icon: <AtSignIcon />,
+      content: "sigma@men.com",
+    },
   ];
   return (
     <>
@@ -33,20 +44,27 @@ export default function Footer() {
         gap={6}
       >
         <GridItem w="100%" h="100%">
-          <Text fontSize="3xl">Ficou alguma dúvida?</Text>
+          <Text mb="1rem" fontSize="3xl">
+            Ficou alguma dúvida?
+          </Text>
           <Flex gap={4} alignItems="center">
             <QuestionIcon />
             <Text fontSize="1xl">Visite nossa central de ajuda</Text>
           </Flex>
         </GridItem>
         <GridItem margin="auto" h="100%">
-          <Text fontSize="3xl">Nossos contatos:</Text>
+          <Text fontSize="3xl" mb="1rem">
+            Nossos contatos:
+          </Text>
           <Flex flexDir="column" gap={4}>
             {contact.map((item) => (
               <Flex key={item.name} gap={4} alignItems="center">
                 {item.icon}
                 <Link href={item.href}>
-                  <Text>{item.name}</Text>
+                  <Flex columnGap="1rem">
+                    <Text>{item.name}:</Text>
+                    <Text>{item.content}</Text>
+                  </Flex>
                 </Link>
               </Flex>
             ))}
