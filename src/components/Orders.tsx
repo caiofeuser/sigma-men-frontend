@@ -74,12 +74,12 @@ export default function Orders() {
         {orders.map((order: OrderType) => (
           <Order key={order.id} order={order} />
         ))}
-        {pathname !== "/basket" && (
+        {pathname !== "/cart" && (
           <Box textAlign="right" mt="1rem">
             <Button
               colorScheme="brand"
               rounded="full"
-              onClick={() => router.push("/basket")}
+              onClick={() => router.push("/cart")}
             >
               Ver mais
             </Button>

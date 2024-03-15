@@ -8,7 +8,7 @@ interface FooterProps {
 
 export default function AuthLayout({ children }: FooterProps) {
   return (
-    <Box style={{ minHeight: "calc(100vh - 105px)" }} bg="beige">
+    <Box style={{ minHeight: "calc(100vh - 95px)" }} bg="beige">
       {children}
     </Box>
   );
