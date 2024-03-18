@@ -17,3 +17,11 @@ export interface CartContextType {
   handleTotalQuantity: () => number;
   // Adicione outras funções ou propriedades do contexto, se necessário
 }
+
+export interface ProductCardProps {
+  title: string;
+  price: number;
+  cardData?: CartItem;
+  id?: number | undefined;
+  stripeId?: string;
+}

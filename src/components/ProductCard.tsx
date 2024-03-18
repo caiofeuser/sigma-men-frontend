@@ -6,13 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCartContext } from "@/context/cart";
 import { CartContextType, CartItem } from "@/types";
 import { useNavbarContext } from "@/context/navbar";
-
-interface ProductCardProps {
-  title: string;
-  price: number;
-  cardData?: CartItem;
-  id?: number | undefined;
-}
+import { ProductCardProps } from "@/types";
 
 export default function ProductCard(props: ProductCardProps) {
   const { title, price, id } = props;
@@ -41,13 +35,7 @@ export default function ProductCard(props: ProductCardProps) {
   // };
 
   return (
-    <Box
-      onClick={() => console.log(id)}
-      minW="18rem"
-      maxH="100%"
-      bg="brand.50"
-      borderRadius="2rem"
-    >
+    <Box minW="18rem" maxH="100%" bg="brand.50" borderRadius="2rem">
       <Flex flexDir="column" alignItems="center">
         <Flex width="100%" px={4} mt={4} justifyContent="space-between">
           <Heading
@@ -94,9 +82,7 @@ export default function ProductCard(props: ProductCardProps) {
                 price: price || 0,
                 id: id || 0,
                 quantity: 1,
-                // total: price,
               });
-              console.log(isOpenCart);
               if (!isOpenCart) {
                 setIsOpenCart(true);
               }

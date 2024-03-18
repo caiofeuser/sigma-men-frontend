@@ -50,38 +50,32 @@ export default function Home() {
       id: 1,
       title: "Product 1",
       price: 100,
+      stripeID: "price_1Oui9lDNIBwjvC1bUyo4bpiy",
     },
     {
       id: 2,
       title: "Product 2",
       price: 200,
+      stripeID: "price_1OuiCQDNIBwjvC1bS2ybppPZ",
     },
     {
       id: 3,
       title: "Product 3",
       price: 300,
+      stripeID: "price_1OuiD7DNIBwjvC1bhnkJsknQ",
     },
 
     {
       id: 4,
       title: "Product 4",
       price: 400,
+      stripeID: "price_1OuiDpDNIBwjvC1brb7QSO2h",
     },
     {
       id: 5,
       title: "Product 5",
       price: 400,
-    },
-    {
-      id: 6,
-      title: "Product 6",
-      price: 400,
-    },
-
-    {
-      id: 7,
-      title: "Product product product productproduct",
-      price: 500,
+      stripeID: "price_1OuiEgDNIBwjvC1bH2MWxF1H",
     },
   ];
 

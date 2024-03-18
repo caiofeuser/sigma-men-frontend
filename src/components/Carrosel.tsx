@@ -6,8 +6,8 @@ interface CarroselProps {
   cardsData: any[];
   cardComponent: React.ComponentType<{
     title: string;
-    price: number | undefined;
-    cardData?: CartItem;
+    price: number;
+    cardData?: CartItem | undefined;
     id?: number;
   }>;
 }

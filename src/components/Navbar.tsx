@@ -66,7 +66,7 @@ export default function Navbar(props: NavbarProps) {
     {
       title: "Sair",
       icon: <Icon h="24px" w="24px" color="black.500" as={RiLogoutBoxLine} />,
-      onClick: () => router.push("/logout"),
+      onClick: () => router.push("/login"),
     },
   ];
 
