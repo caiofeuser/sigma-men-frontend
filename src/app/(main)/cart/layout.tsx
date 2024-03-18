@@ -6,9 +6,9 @@ interface FooterProps {
   children?: React.ReactNode;
 }
 
-export default function BasketLayout({ children }: FooterProps) {
+export default function CartLayout({ children }: FooterProps) {
   return (
-    <Box style={{ minHeight: "calc(100vh - 105px)" }} bg="beige">
+    <Box style={{ minHeight: "calc(100vh - 95px)" }} bg="beige">
       {children}
     </Box>
   );

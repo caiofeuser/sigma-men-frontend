@@ -10,9 +10,32 @@ import Carrosel from "@/components/Carrosel";
 import TreatmentCard from "@/components/TreatmentCard";
 import ProductCard from "@/components/ProductCard";
 import Question from "@/components/Question";
+import { useNavbarContext } from "@/context/navbar";
+import { useEffect, useRef, useState, Fragment } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
+  const ProductTriggerRef = useRef(null);
+  const [isProductTriggerVisible, setIsProductTriggerVisible] = useState(false);
+
+  const { setIsNavbarVisible } = useNavbarContext();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setIsNavbarVisible(true);
+        setIsProductTriggerVisible(true);
+      } else {
+        setIsNavbarVisible(false);
+        setIsProductTriggerVisible(false);
+      }
+    });
+
+    if (ProductTriggerRef.current) {
+      observer.observe(ProductTriggerRef.current);
+    }
+  }, []);
+
   const cards = [
     { title: "Queda de cabelo" },
     { title: "Queda de cabelo" },
@@ -24,32 +47,39 @@ export default function Home() {
 
   const products = [
     {
+      id: 1,
       title: "Product 1",
       price: 100,
     },
     {
+      id: 2,
       title: "Product 2",
       price: 200,
     },
     {
+      id: 3,
       title: "Product 3",
       price: 300,
     },
 
     {
+      id: 4,
       title: "Product 4",
       price: 400,
     },
     {
+      id: 5,
       title: "Product 5",
       price: 400,
     },
     {
+      id: 6,
       title: "Product 6",
       price: 400,
     },
 
     {
+      id: 7,
       title: "Product product product productproduct",
       price: 500,
     },
@@ -84,32 +114,41 @@ export default function Home() {
             produtos
           </span>
         </Text>
-        <Carrosel cardComponent={ProductCard} cardsData={products} />
-        <Box px={12}>
-          <Heading fontSize="5xl" as="b">
-            Alguma
-            <span style={{ color: "var(--chakra-colors-brand-500)" }}>
-              {" "}
-              dúvida?
-            </span>
-          </Heading>
-          <Flex
-            flexDir="column"
-            alignItems="center"
-            justifyContent="center"
-            gap={12}
-            my="3rem"
-            mx="4rem"
+        <div ref={ProductTriggerRef}>
+          <div
+            style={{
+              opacity: isProductTriggerVisible ? 1 : 0,
+              transition: "opacity 1.5s",
+            }}
           >
-            {questions.map((question, index) => (
-              <Question
-                key={index}
-                question={question.question}
-                answer={question.answer}
-              />
-            ))}
-          </Flex>
-        </Box>
+            <Carrosel cardComponent={ProductCard} cardsData={products} />
+          </div>
+          <Box px={12}>
+            <Heading fontSize="5xl" as="b">
+              Alguma
+              <span style={{ color: "var(--chakra-colors-brand-500)" }}>
+                {" "}
+                dúvida?
+              </span>
+            </Heading>
+            <Flex
+              flexDir="column"
+              alignItems="center"
+              justifyContent="center"
+              gap={12}
+              my="3rem"
+              mx="4rem"
+            >
+              {questions.map((question, index) => (
+                <Question
+                  key={index}
+                  question={question.question}
+                  answer={question.answer}
+                />
+              ))}
+            </Flex>
+          </Box>
+        </div>
       </Box>
     </>
   );

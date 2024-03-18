@@ -1,4 +1,5 @@
 ﻿import { Fragment } from "react";
+import { CartItem } from "@/types";
 // import TreatmentCard from "./TreatmentCard";
 
 interface CarroselProps {
@@ -6,6 +7,8 @@ interface CarroselProps {
   cardComponent: React.ComponentType<{
     title: string;
     price: number | undefined;
+    cardData?: CartItem;
+    id?: number;
   }>;
 }
 
@@ -24,9 +27,14 @@ export default function Carrosel(props: CarroselProps) {
         marginBottom: "4rem",
       }}
     >
-      {cardsData.map((card, index) => (
+      {cardsData.map((card: CartItem, index) => (
         <Fragment key={index}>
-          <CardComponent title={card.title} price={card.price} />
+          <CardComponent
+            cardData={card}
+            title={card.title}
+            price={card.price}
+            id={card.id}
+          />
         </Fragment>
       ))}
     </div>

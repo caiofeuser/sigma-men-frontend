@@ -3,25 +3,51 @@ import React from "react";
 import { Box, Flex, Text, Heading, Button } from "@chakra-ui/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useCartContext } from "@/context/cart";
+import { CartContextType, CartItem } from "@/types";
+import { useNavbarContext } from "@/context/navbar";
 
 interface ProductCardProps {
   title: string;
-  price: number | undefined;
+  price: number;
+  cardData?: CartItem;
+  id?: number | undefined;
 }
 
 export default function ProductCard(props: ProductCardProps) {
-  const { title, price } = props;
+  const { title, price, id } = props;
+  const { cartItems, addItem } = useCartContext();
+  const { isOpenCart, setIsOpenCart, setShouldCloseCartMenu } =
+    useNavbarContext();
   const router = useRouter();
 
-  const handleClickProduct = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    router.push("https://buy.stripe.com/test_00g4hU2E94Ci6o8000");
-    console.log({ title, price });
-  };
+  // const handleClickProduct = (
+  //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  // ) => {
+  //   router.push("https://buy.stripe.com/test_00g4hU2E94Ci6o8000");
+  //   console.log({ title, price });
+  // };
+
+  // const handleClickProduct = (item: CartItem) => {
+  //   addItem({
+  //     title,
+  //     price: price || 0,
+  //     id: 0,
+  //     quantity: 1,
+  //   });
+  //   if (!isOpenCart) {
+  //     setIsOpenCart(true);
+  //   }
+  // };
 
   return (
-    <Box minW="18rem" maxH="100%" bg="brand.50" borderRadius="2rem">
+    <Box
+      onClick={() => console.log(id)}
+      minW="18rem"
+      maxH="100%"
+      bg="brand.50"
+      borderRadius="2rem"
+    >
       <Flex flexDir="column" alignItems="center">
         <Flex width="100%" px={4} mt={4} justifyContent="space-between">
           <Heading
@@ -60,7 +86,21 @@ export default function ProductCard(props: ProductCardProps) {
             Saiba Mais
           </Button>
           <Button
-            onClick={handleClickProduct}
+            onMouseEnter={() => setShouldCloseCartMenu(false)}
+            onMouseLeave={() => setShouldCloseCartMenu(true)}
+            onClick={() => {
+              addItem({
+                title,
+                price: price || 0,
+                id: id || 0,
+                quantity: 1,
+                // total: price,
+              });
+              console.log(isOpenCart);
+              if (!isOpenCart) {
+                setIsOpenCart(true);
+              }
+            }}
             w="7rem"
             colorScheme="brand"
             borderRadius="2rem"

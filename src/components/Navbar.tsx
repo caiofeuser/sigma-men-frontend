@@ -22,50 +22,27 @@ import {
   MenuButton,
   Box,
   Button,
+  Fade,
 } from "@chakra-ui/react";
 import { SlBasket } from "react-icons/sl";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { RiLogoutBoxLine } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
-import { useState } from "react";
-import MenuBasket from "./MenuBasket";
+import MenuBasket from "./MenuCart";
+import { useNavbarContext } from "@/context/navbar";
 // import { useRouter } from "next/router" ;
 
 interface NavbarProps {
   drawerRef: React.RefObject<HTMLButtonElement>;
   onOpen: () => void;
-}
-
-interface basketItems {
-  title: string;
-  total: number;
-  price: number;
-  quantity: number;
+  isNavbarVisible: boolean;
 }
 
 export default function Navbar(props: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [basketItems, setBasketItems] = useState([
-    {
-      title: "Produto 1",
-      total: 100,
-      price: 100,
-      quantity: 2,
-    },
-    {
-      title: "Produto 2",
-      total: 200,
-      price: 200,
-      quantity: 1,
-    },
-  ] as basketItems[]);
-
-  //@ts-ignore
-  // const TestimonialCard = dynamic(() => import("./TestimonialCard"), {
-  //   ssr: false,
-  // });
+  const { isNavbarVisible } = useNavbarContext();
 
   const menuItems = [
     {
@@ -98,8 +75,15 @@ export default function Navbar(props: NavbarProps) {
       style={{
         display: "flex",
         justifyContent: "space-between",
-        padding: "1rem",
-      }}
+        padding: "1rem 1rem 1rem 1rem",
+        position: "fixed", // Adiciona posição fixa para a barra de navegação
+        top: 0, // Fixa a barra de navegação no topo da tela
+        left: 0, // Alinha a barra de navegação à esquerda
+        right: 0, // Alinha a barra de navegação à direita
+        zIndex: 999, // Garante que a barra de navegação fique sobre outros elementos
+        backgroundColor: "white",
+        minHeight: "95px",
+      }} // Adiciona uma cor de fundo (altere conforme necessário)
       suppressHydrationWarning
     >
       <div
@@ -137,13 +121,20 @@ export default function Navbar(props: NavbarProps) {
           cursor: "pointer",
         }}
       >
-        <Image
-          src="/logo.png"
-          priority={true}
-          width={185}
-          height={185}
-          alt="logo"
-        />
+        <div style={{ position: "absolute", top: "1rem" }}>
+          <Fade in={isNavbarVisible} transition={{ enter: { duration: 2 } }}>
+            <div style={{ maxHeight: "63px" }}>
+              <Image src="/e.png" width={38} height={73} alt="logo" />
+            </div>
+          </Fade>
+        </div>
+        <div style={{ position: "absolute", top: "1rem" }}>
+          <Fade in={!isNavbarVisible} transition={{ enter: { duration: 2 } }}>
+            <div style={{ maxHeight: "63px" }}>
+              <Image src="/logo.png" width={185} height={73} alt="logo" />
+            </div>
+          </Fade>
+        </div>
       </div>
       <div
         style={{

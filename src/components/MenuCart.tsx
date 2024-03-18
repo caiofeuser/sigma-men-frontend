@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoMdAddCircle } from "react-icons/io";
 import { SlBasket } from "react-icons/sl";
 import { MinusIcon, DeleteIcon } from "@chakra-ui/icons";
@@ -18,73 +18,31 @@ import {
   Box,
 } from "@chakra-ui/react";
 import Image from "next/image";
+import { useCartContext } from "@/context/cart";
+import { useNavbarContext } from "@/context/navbar";
 
-interface basketItems {
-  title: string;
-  total: number;
-  price: number;
-  quantity: number;
-}
-
-export default function MenuBasket() {
+export default function MenuCart() {
   const router = useRouter();
-  const handleAddToCart = (index: number) => {
-    setBasketItems((prev) => {
-      const newBasket = prev.map((item, i) => {
-        if (i === index) {
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-            total: item.price * item.quantity,
-          };
-        }
-        return item;
-      });
-      return newBasket;
-    });
-  };
-  const handleSubtractFromCart = (index: number) => {
-    setBasketItems((prev: basketItems[]) => {
-      // remove if the quantity is 1
-      if (prev[index].quantity === 1) {
-        return prev.filter((_, i) => i !== index);
-      }
-      const newBasket = prev.map((item, i) => {
-        if (i === index) {
-          return {
-            ...item,
-            quantity: item.quantity - 1,
-            total: item.price * item.quantity,
-          };
-        }
-        return item;
-      });
-      return newBasket;
-    });
-  };
+  const { isOpenCart, setIsOpenCart, shouldCloseCartMenu } = useNavbarContext();
+  const {
+    cartItems,
+    handleAddSameToCart,
+    handleSubtractSameFromCart,
+    handleRemoveFromCart,
+    handleTotalQuantity,
+  } = useCartContext();
 
-  const handleRemoveFromCart = (index: number) => {
-    setBasketItems((prev: basketItems[]) => {
-      return prev.filter((_, i) => i !== index);
-    });
-  };
-  const [basketItems, setBasketItems] = useState([
-    {
-      title: "Produto 1",
-      total: 100,
-      price: 100,
-      quantity: 2,
-    },
-    {
-      title: "Produto 2",
-      total: 200,
-      price: 200,
-      quantity: 1,
-    },
-  ] as basketItems[]);
+  useEffect(() => {
+    handleTotalQuantity();
+  }, [cartItems]);
   return (
-    <Menu closeOnSelect={false}>
+    <Menu
+      closeOnSelect={false}
+      isOpen={isOpenCart}
+      onClose={() => (shouldCloseCartMenu ? setIsOpenCart(false) : null)}
+    >
       <MenuButton
+        onClick={() => setIsOpenCart(!isOpenCart)}
         as={IconButton}
         colorScheme="black.500"
         variant="ghost"
@@ -93,7 +51,7 @@ export default function MenuBasket() {
       />
       <MenuList>
         <MenuGroup title="Seu carrinho">
-          {basketItems.length === 0 ? (
+          {cartItems.length === 0 ? (
             <Flex
               minW="440px"
               w="100%"
@@ -105,8 +63,8 @@ export default function MenuBasket() {
           ) : (
             //
             <>
-              {basketItems.map((item, index) => (
-                <Flex px="2rem" key={item.title} alignItems="center" gap={4}>
+              {cartItems.map((item, index) => (
+                <Flex px="2rem" key={index} alignItems="center" gap={4}>
                   <Image
                     src="/product.png"
                     alt="produto1"
@@ -121,7 +79,7 @@ export default function MenuBasket() {
                       rounded="full"
                       size="sm"
                       variant="ghost"
-                      onClick={() => handleAddToCart(index)}
+                      onClick={() => handleAddSameToCart(item)}
                       aria-label="Adicionar ao carrinho"
                     >
                       <Icon color="black.500" as={IoMdAddCircle} />
@@ -130,7 +88,7 @@ export default function MenuBasket() {
                       rounded="full"
                       size="sm"
                       variant="ghost"
-                      onClick={() => handleSubtractFromCart(index)}
+                      onClick={() => handleSubtractSameFromCart(item)}
                       aria-label="Remover do carrinho"
                     >
                       <Icon color="black.500" as={MinusIcon} />
@@ -140,12 +98,12 @@ export default function MenuBasket() {
                     rounded="full"
                     variant="ghost"
                     size="sm"
-                    onClick={() => handleRemoveFromCart(index)}
+                    onClick={() => handleRemoveFromCart(item)}
                     aria-label="Remover do carrinho"
                   >
                     <Icon color="black.500" as={DeleteIcon} />
                   </IconButton>
-                  <Text>R${item.price},00</Text>
+                  <Text>R${item.total ? item.total : item.price},00</Text>
                 </Flex>
               ))}
             </>
@@ -153,13 +111,14 @@ export default function MenuBasket() {
         </MenuGroup>
         <Box textAlign="right" px="2rem" mt="1rem">
           <Text fontWeight="bold">
-            Total: R${basketItems.reduce((acc, item) => acc + item.total, 0)},00
+            Total: R$
+            {handleTotalQuantity()}
           </Text>
           <Box textAlign="center" mt="1.5rem">
             <Button
               colorScheme="brand"
               onClick={() => {
-                router.push("/basket");
+                router.push("/cart");
               }}
               leftIcon={<RiLoginCircleFill />}
               rounded="full"
