@@ -4,7 +4,7 @@ import { IoMdAddCircle } from "react-icons/io";
 import { SlBasket } from "react-icons/sl";
 import { MinusIcon, DeleteIcon } from "@chakra-ui/icons";
 import { RiLoginCircleFill } from "react-icons/ri";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import {
   IconButton,
   Text,
@@ -20,9 +20,12 @@ import {
 import Image from "next/image";
 import { useCartContext } from "@/context/cart";
 import { useNavbarContext } from "@/context/navbar";
+import useAxios from "@/api/api";
 
 export default function MenuCart() {
   const router = useRouter();
+  const currentPath = usePathname();
+  const { postCartCheckout } = useAxios();
   const { isOpenCart, setIsOpenCart, shouldCloseCartMenu } = useNavbarContext();
   const {
     cartItems,
@@ -35,6 +38,19 @@ export default function MenuCart() {
   useEffect(() => {
     handleTotalQuantity();
   }, [cartItems]);
+
+  useEffect(() => {}, []);
+
+  const handleCheckout = () => {
+    postCartCheckout(cartItems).then(
+      (data) => {
+        console.log(data);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  };
   return (
     <Menu
       closeOnSelect={false}
@@ -118,7 +134,7 @@ export default function MenuCart() {
             <Button
               colorScheme="brand"
               onClick={() => {
-                router.push("/cart");
+                handleCheckout();
               }}
               leftIcon={<RiLoginCircleFill />}
               rounded="full"

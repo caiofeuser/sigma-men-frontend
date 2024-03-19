@@ -9,7 +9,7 @@ import { useNavbarContext } from "@/context/navbar";
 import { ProductCardProps } from "@/types";
 
 export default function ProductCard(props: ProductCardProps) {
-  const { title, price, id } = props;
+  const { title, price, id, cardData } = props;
   const { cartItems, addItem } = useCartContext();
   const { isOpenCart, setIsOpenCart, setShouldCloseCartMenu } =
     useNavbarContext();
@@ -45,7 +45,7 @@ export default function ProductCard(props: ProductCardProps) {
             // textAlign="center"
             noOfLines={2}
           >
-            {title}
+            {cardData?.title}
           </Heading>
           <Flex
             height="2rem"
@@ -56,7 +56,7 @@ export default function ProductCard(props: ProductCardProps) {
             minW="5rem"
           >
             <Text opacity={0.5} align="center" whiteSpace="nowrap">
-              R$ {price}
+              R$ {cardData?.price}
             </Text>
           </Flex>
         </Flex>
@@ -77,11 +77,13 @@ export default function ProductCard(props: ProductCardProps) {
             onMouseEnter={() => setShouldCloseCartMenu(false)}
             onMouseLeave={() => setShouldCloseCartMenu(true)}
             onClick={() => {
+              if (cardData === undefined) return;
               addItem({
-                title,
-                price: price || 0,
+                title: cardData.title,
+                price: cardData.price,
                 id: id || 0,
                 quantity: 1,
+                stripeID: cardData.stripeID,
               });
               if (!isOpenCart) {
                 setIsOpenCart(true);

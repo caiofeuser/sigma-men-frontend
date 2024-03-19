@@ -4,6 +4,7 @@
   price: number;
   quantity: number;
   total?: number;
+  stripeID?: string;
 }
 
 export interface CartContextType {
@@ -23,5 +24,5 @@ export interface ProductCardProps {
   price: number;
   cardData?: CartItem;
   id?: number | undefined;
-  stripeId?: string;
+  stripeID?: string;
 }
