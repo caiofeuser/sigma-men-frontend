@@ -10,19 +10,19 @@ export default function BannerHero() {
   const router = useRouter();
   const content = [
     {
-      title: "Tratamentos customizados",
+      name: "Tratamentos customizados",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tincidunt dignissim lorem et feugiat. Suspendisse lacus nisl, bibendum fringilla dui quis, vehicula ullamcorper est",
       icon: CgPill,
     },
     {
-      title: "Discreto, 100% online",
+      name: "Discreto, 100% online",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tincidunt dignissim lorem et feugiat. Suspendisse lacus nisl, bibendum fringilla dui quis, vehicula ullamcorper est",
       icon: LuEyeOff,
     },
     {
-      title: "Receita personalizada",
+      name: "Receita personalizada",
       description:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tincidunt dignissim lorem et feugiat. Suspendisse lacus nisl, bibendum fringilla dui quis, vehicula ullamcorper est",
       icon: BsPrescription2,

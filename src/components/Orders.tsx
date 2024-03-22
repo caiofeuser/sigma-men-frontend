@@ -20,7 +20,7 @@ interface OrderType {
   total: number;
   orderNumber: string;
   items: {
-    title: string;
+    name: string;
     price: number;
     quantity: number;
   }[];
@@ -37,7 +37,7 @@ export default function Orders() {
       total: 100,
       items: [
         {
-          title: "Produto 1",
+          name: "Produto 1",
           price: 100,
           quantity: 1,
         },
@@ -50,7 +50,7 @@ export default function Orders() {
       total: 200,
       items: [
         {
-          title: "Produto 2",
+          name: "Produto 2",
           price: 200,
           quantity: 1,
         },

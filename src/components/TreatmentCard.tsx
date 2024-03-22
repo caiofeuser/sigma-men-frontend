@@ -1,8 +1,9 @@
 ﻿import { Text, Box, Button, Heading, Icon } from "@chakra-ui/react";
 import Image from "next/image";
 import { FaCirclePlus } from "react-icons/fa6";
+import { TreatmentType } from "@/types";
 
-export default function TreatmentCard(props: { title: string }) {
+export default function TreatmentCard(props: TreatmentType) {
   return (
     <Box
       ml="0.75rem"
@@ -33,7 +34,7 @@ export default function TreatmentCard(props: { title: string }) {
           alignItems: "center",
         }}
       >
-        <Heading fontSize="4xl">{props.title}</Heading>
+        <Heading fontSize="4xl">{props.cardData.name}</Heading>
         <Image src="/cardImg.png" alt="hero" width={300} height={300} />
         <Button
           variant="solid"

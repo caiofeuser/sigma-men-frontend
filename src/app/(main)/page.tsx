@@ -12,12 +12,16 @@ import ProductCard from "@/components/ProductCard";
 import Question from "@/components/Question";
 import { useNavbarContext } from "@/context/navbar";
 import { useEffect, useRef, useState, Fragment } from "react";
+import useAxios from "@/api/api";
+import { ProductType } from "@/types";
 
 const inter = Inter({ subsets: ["latin"] });
+
 export default function Home() {
   const ProductTriggerRef = useRef(null);
   const [isProductTriggerVisible, setIsProductTriggerVisible] = useState(false);
-
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const { getAllProducts } = useAxios();
   const { setIsNavbarVisible } = useNavbarContext();
 
   useEffect(() => {
@@ -37,47 +41,24 @@ export default function Home() {
   }, []);
 
   const cards = [
-    { title: "Queda de cabelo" },
-    { title: "Queda de cabelo" },
-    { title: "Queda de cabelo" },
-    { title: "Queda de cabelo" },
-    { title: "Queda de cabelo" },
-    { title: "Queda de cabelo" },
+    { name: "Queda de cabelo" },
+    { name: "Queda de cabelo" },
+    { name: "Queda de cabelo" },
+    { name: "Queda de cabelo" },
+    { name: "Queda de cabelo" },
+    { name: "Queda de cabelo" },
   ];
 
-  const products = [
-    {
-      id: 1,
-      title: "Product 1",
-      price: 100,
-      stripeID: "price_1Oui9lDNIBwjvC1bUyo4bpiy",
-    },
-    {
-      id: 2,
-      title: "Product 2",
-      price: 200,
-      stripeID: "price_1OuiCQDNIBwjvC1bS2ybppPZ",
-    },
-    {
-      id: 3,
-      title: "Product 3",
-      price: 300,
-      stripeID: "price_1OuiD7DNIBwjvC1bhnkJsknQ",
-    },
-
-    {
-      id: 4,
-      title: "Product 4",
-      price: 400,
-      stripeID: "price_1OuiDpDNIBwjvC1brb7QSO2h",
-    },
-    {
-      id: 5,
-      title: "Product 5",
-      price: 400,
-      stripeID: "price_1OuiEgDNIBwjvC1bH2MWxF1H",
-    },
-  ];
+  useEffect(() => {
+    getAllProducts()
+      .then((data) => {
+        setProducts(data);
+      })
+      .catch((error) => {
+        console.error(error);
+        setProducts([]);
+      });
+  }, []);
 
   const questions = [
     {
@@ -99,7 +80,11 @@ export default function Home() {
   return (
     <>
       <BannerHero />
-      <Carrosel cardComponent={TreatmentCard} cardsData={cards} />
+      <Carrosel
+        //@ts-ignore
+        cardComponent={TreatmentCard}
+        cardsData={cards}
+      />
       <Box>
         <Text px={12} fontSize="5xl" mb="0rem" as="b">
           Nossos
@@ -115,7 +100,11 @@ export default function Home() {
               transition: "opacity 1.5s",
             }}
           >
-            <Carrosel cardComponent={ProductCard} cardsData={products} />
+            <Carrosel
+              //@ts-ignore
+              cardComponent={ProductCard}
+              cardsData={products}
+            />
           </div>
           <Box px={12}>
             <Heading fontSize="5xl" as="b">

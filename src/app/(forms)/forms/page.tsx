@@ -11,21 +11,21 @@ export default function Forms() {
 
   const treatments = [
     {
-      title: "Queda de cabelo",
+      name: "Queda de cabelo",
       icon: <Image width="72" alt="hairLoss" height="72" src="hairLoss.svg" />,
     },
     {
-      title: "Disfunção erétil",
+      name: "Disfunção erétil",
       icon: (
         <Image width="72" alt="hairLoss" height="72" src="disfuction.svg" />
       ),
     },
     {
-      title: "Sono",
+      name: "Sono",
       icon: <Image width="72" alt="hairLoss" height="72" src="sleep.svg" />,
     },
     {
-      title: "Perda de peso",
+      name: "Perda de peso",
       icon: (
         <Image width="72" alt="hairLoss" height="72" src="weightLoss.svg" />
       ),
@@ -46,7 +46,7 @@ export default function Forms() {
         <Heading textAlign="center">No que podemos ajudar?</Heading>
         <Flex justifyContent="space-evenly">
           {treatments.map((treatment) => (
-            <Box mt="4rem" key={treatment.title}>
+            <Box mt="4rem" key={treatment.name}>
               <Button
                 justifyContent="center"
                 alignItems="center"
@@ -68,7 +68,7 @@ export default function Forms() {
                 {treatment.icon}
               </Button>
               <Text mt="2rem" textAlign="center" fontSize="2xl">
-                {treatment.title}
+                {treatment.name}
               </Text>
             </Box>
           ))}

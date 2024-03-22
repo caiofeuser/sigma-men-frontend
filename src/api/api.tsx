@@ -61,7 +61,16 @@ const useAxios = () => {
     }
   };
 
-  return { postCartCheckout };
+  const getAllProducts = async () => {
+    try {
+      const response = await axiosInstance.get("/api/stripe/products/");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return { postCartCheckout, getAllProducts };
 };
 
 export default useAxios;

@@ -1,10 +1,28 @@
 ﻿export interface CartItem {
-  id: number;
-  title: string;
+  id: string;
+  name: string;
   price: number;
   quantity: number;
   total?: number;
   stripeID?: string;
+  image?: string[];
+}
+
+export interface ProductType {
+  name: string;
+  object: string;
+  type: string;
+  description: string;
+  price_monetary: number;
+  stripeID: string;
+  image: string[];
+  id: string;
+}
+
+export interface TreatmentType {
+  cardData: {
+    name: string;
+  };
 }
 
 export interface CartContextType {
@@ -20,7 +38,7 @@ export interface CartContextType {
 }
 
 export interface ProductCardProps {
-  title: string;
+  name: string;
   price: number;
   cardData?: CartItem;
   id?: number | undefined;

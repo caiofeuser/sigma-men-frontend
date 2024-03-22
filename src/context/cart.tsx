@@ -16,9 +16,21 @@ const CartContext = createContext<CartContextType>({
 interface CartType {
   children: React.ReactNode;
 }
+const initialCartItems =
+  typeof window !== "undefined"
+    ? JSON.parse(localStorage.getItem("cart") || "[]")
+    : [];
 
 export function CartWrapper({ children }: CartType) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    setCartItems(initialCartItems);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addItem = (cartItem: CartItem) => {
     //check by id if the item is already in the cart
@@ -37,6 +49,7 @@ export function CartWrapper({ children }: CartType) {
         return item;
       });
       setCartItems(newCart);
+      // localStorage.setItem("cart", JSON.stringify(newCart));
       return;
     } else {
       setCartItems([...cartItems, cartItem]);
@@ -44,7 +57,7 @@ export function CartWrapper({ children }: CartType) {
   };
 
   const removeItem = (cartItem: CartItem) => {
-    const newCart = cartItems.filter((_, i) => i !== cartItem.id);
+    const newCart = cartItems.filter((_, i) => i !== Number(cartItem.id));
     setCartItems(newCart);
   };
 
@@ -107,13 +120,6 @@ export function CartWrapper({ children }: CartType) {
     });
   };
 
-  useEffect(() => {
-    const cart = localStorage.getItem("cart");
-    if (cart) {
-      setCartItems(JSON.parse(cart));
-    }
-    // console.log(cartItems);
-  }, [cartItems]);
   return (
     <CartContext.Provider
       value={{

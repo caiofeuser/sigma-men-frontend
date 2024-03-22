@@ -25,7 +25,7 @@ interface OrderType {
     total: number;
     orderNumber: string;
     items: {
-      title: string;
+      name: string;
       price: number;
       quantity: number;
     }[];
@@ -78,7 +78,7 @@ export default function Order(props: OrderType) {
                 </Thead>
                 <Tbody>
                   <Tr>
-                    <Td>{item.title}</Td>
+                    <Td>{item.name}</Td>
                     <Td isNumeric>{item.quantity}</Td>
                     <Td isNumeric>R$ {item.price}</Td>
                   </Tr>
