@@ -70,7 +70,19 @@ const useAxios = () => {
     }
   };
 
-  return { postCartCheckout, getAllProducts };
+  const getProductsOfCheckout = async (checkoutID: string) => {
+    try {
+      // stripe/checkout/products/?session_id=cs_test_b105dqvnclgeFIeHPTXbpPVIayovVhGcduMiaZeEp4k6O5npcmeDGEIofn
+      const response = await axiosInstance.get(
+        `/api/stripe/checkout/products/?session_id=${checkoutID}`
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return { postCartCheckout, getAllProducts, getProductsOfCheckout };
 };
 
 export default useAxios;

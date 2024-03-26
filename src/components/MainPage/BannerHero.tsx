@@ -95,7 +95,7 @@ export default function BannerHero() {
                 />
                 <div>
                   <Heading fontSize="4xl" as="b">
-                    {item.title}
+                    {item.name}
                   </Heading>
                   <Text style={{ fontWeight: "300" }} mt={2}>
                     {item.description}

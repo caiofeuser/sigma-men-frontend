@@ -83,6 +83,7 @@ export default function Navbar(props: NavbarProps) {
         zIndex: 999, // Garante que a barra de navegação fique sobre outros elementos
         backgroundColor: "white",
         minHeight: "95px",
+        boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
       }} // Adiciona uma cor de fundo (altere conforme necessário)
       suppressHydrationWarning
     >

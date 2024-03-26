@@ -25,6 +25,15 @@ export interface TreatmentType {
   };
 }
 
+export interface CheckoutItems {
+  image: string;
+  name: string;
+  price: number;
+  price_id: string;
+  quantity: number;
+  product_id: string;
+}
+
 export interface CartContextType {
   cartItems: CartItem[];
   handleAddSameToCart: (cartItem: CartItem) => void;

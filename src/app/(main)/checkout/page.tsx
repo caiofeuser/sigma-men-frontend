@@ -1,5 +1,4 @@
 ﻿"use client";
-import Orders from "@/components/Orders";
 import {
   Box,
   Text,
@@ -20,10 +19,9 @@ import {
   Icon,
   IconButton,
 } from "@chakra-ui/react";
-import UserInfo from "@/components/UserInfo";
 import { useCartContext } from "@/context/cart";
 import useAxios from "@/api/api";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowForwardIcon,
@@ -32,10 +30,13 @@ import {
   ArrowBackIcon,
 } from "@chakra-ui/icons";
 import { CartItem } from "@/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Checkout() {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isAlreadyChecked, setIsAlreadyChecked] = useState(false);
+  const searchParams = useSearchParams();
+  const pathName = usePathname();
   const {
     cartItems,
     handleAddSameToCart,
@@ -45,32 +46,43 @@ export default function Checkout() {
   } = useCartContext();
   const { postCartCheckout } = useAxios();
   const router = useRouter();
-  // const user = "Caio";
-  // const handleSaudation = () => {
-  //   const dateHours = new Date().getHours();
-  //   if (dateHours >= 4 && dateHours < 12) {
-  //     return `Bom dia, ${user}!`;
-  //   } else if (dateHours >= 12 && dateHours < 18) {w
-  //     return `Boa tarde, ${user}!`;
-  //   } else {
-  //     return `Boa noite, ${user}!`;
-  //   }
-  // };
 
   const handleCheckout = () => {
     setIsButtonLoading(true);
     postCartCheckout(cartItems).then(
       (data) => {
         router.push(data.url);
+        setIsAlreadyChecked(true);
       },
       (error) => {
         console.error(error);
+        alert("Erro ao finalizar a compra");
       }
     );
   };
 
+  const handleCheckStatus = () => {
+    // checkout?success=true&session_id=cs_test_b105dqvnclgeFIeHPTXbpPVIayovVhGcduMiaZeEp4k6O5npcmeDGEIofn
+    const isSuccessful = searchParams.get("success") === "true";
+    const isCanceled = searchParams.get("canceled") === "true";
+    const sessionID = searchParams.get("session_id");
+
+    if (isSuccessful) {
+      clearCart();
+      alert(`Compra ${sessionID} realizada com sucesso!`);
+    } else if (isCanceled) {
+      alert(`Compra ${sessionID} cancelada!`);
+    }
+  };
+
+  useEffect(() => {
+    // if (isAlreadyChecked) {
+    handleCheckStatus();
+    // }
+  }, []);
+
   return (
-    <Flex justifyContent="center">
+    <Flex justifyContent="center" onClick={() => console.log(pathName)}>
       <Box bg="white" m="2rem" px="2rem" w="100%" borderRadius="2rem">
         <Heading as="h3" size="2xl" m="2rem" mb="4rem" textAlign="center">
           Carrinho de compras

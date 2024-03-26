@@ -1,5 +1,5 @@
 ﻿"use client";
-import Orders from "@/components/Orders";
+import Orders from "@/components/Order/Orders";
 import { Box, Heading, Flex } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import UserInfo from "@/components/UserInfo";
