@@ -72,7 +72,6 @@ export default function ProductCard(props: ProductCardProps) {
             </Text>
           </Flex>
         </Flex>
-
         <Image
           loader={() => src}
           src={src}

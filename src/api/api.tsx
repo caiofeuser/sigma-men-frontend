@@ -82,7 +82,75 @@ const useAxios = () => {
     }
   };
 
-  return { postCartCheckout, getAllProducts, getProductsOfCheckout };
+  const getSurveys = async (survey_id: number) => {
+    try {
+      const response = await axiosInstance.get(`/api/survey/${survey_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getSurveyQuestions = async (survey: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/survey/${survey}/questions/`
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getQuestionsOptions = async (questionID: number) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/question/${questionID}/options/`
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getSurveyResults = async (survey_name: string, track_id: number) => {
+    try {
+      const response = await axiosInstance.get(
+        `/api/result/${survey_name}/${track_id}/`
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getProductsFilterdOnResult = (
+    survey_name: string,
+    track_id: number
+  ) => {
+    try {
+      const response = axiosInstance.get(`/api/stripe/treatments/products/`, {
+        params: {
+          survey: survey_name,
+          track: track_id,
+        },
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return {
+    postCartCheckout,
+    getAllProducts,
+    getProductsOfCheckout,
+    getSurveyQuestions,
+    getQuestionsOptions,
+    getSurveys,
+    getSurveyResults,
+    getProductsFilterdOnResult,
+  };
 };
 
 export default useAxios;

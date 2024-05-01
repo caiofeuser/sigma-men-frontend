@@ -40,6 +40,7 @@ export interface CartContextType {
   handleSubtractSameFromCart: (cartItem: CartItem) => void;
   handleRemoveFromCart: (cartItem: CartItem) => void;
   addItem: (cartItem: CartItem) => void;
+  addItems: (cartItem: CartItem[]) => void;
   removeItem: (cartItem: CartItem) => void;
   clearCart: () => void;
   handleTotalQuantity: () => number;
@@ -53,3 +54,25 @@ export interface ProductCardProps {
   id?: number | undefined;
   stripeID?: string;
 }
+
+export interface OptionType {
+  id: number;
+  option: string;
+  question: number;
+}
+
+export interface QuestionsType {
+  id: number;
+  question: string;
+  position: number;
+  options: OptionType[];
+  survey: number;
+}
+
+export interface SurveyType {
+  id: number;
+  name: string;
+  number_of_questions: number;
+}
+
+export interface RecomendedProductsType {}

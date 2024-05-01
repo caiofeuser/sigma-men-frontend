@@ -1,6 +1,7 @@
 ﻿"use client";
 import { createContext, useState, useContext, useEffect } from "react";
 import { CartItem, CartContextType } from "@/types";
+import { Carlito } from "next/font/google";
 
 const CartContext = createContext<CartContextType>({
   cartItems: [],
@@ -8,6 +9,7 @@ const CartContext = createContext<CartContextType>({
   handleSubtractSameFromCart: () => {},
   handleRemoveFromCart: () => {},
   addItem: () => {},
+  addItems: () => {},
   removeItem: () => {},
   clearCart: () => {},
   handleTotalQuantity: () => 0,
@@ -35,6 +37,7 @@ export function CartWrapper({ children }: CartType) {
   const addItem = (cartItem: CartItem) => {
     //check by id if the item is already in the cart
     const itemIndex = cartItems.findIndex((item) => item.id === cartItem.id);
+    console.log(cartItem);
     // if the item is already in the cart
     if (itemIndex !== -1) {
       // increment the quantity
@@ -54,6 +57,35 @@ export function CartWrapper({ children }: CartType) {
     } else {
       setCartItems([...cartItems, cartItem]);
     }
+  };
+
+  const addItems = (cartItemsToAdd: CartItem[]) => {
+    // Iterate over the items to be added
+    cartItemsToAdd.forEach((itemToAdd) => {
+      // Check if the item is already in the cart
+      const existingItemIndex = cartItems.findIndex(
+        (item) => item.id === itemToAdd.id
+      );
+
+      // If the item is already in the cart, update the quantity
+      if (existingItemIndex !== -1) {
+        setCartItems((prevCartItems) => {
+          return prevCartItems.map((item, index) => {
+            if (index === existingItemIndex) {
+              return {
+                ...item,
+                quantity: item.quantity + itemToAdd.quantity, // Summing quantities
+                total: item.price * (item.quantity + itemToAdd.quantity), // Recalculate total
+              };
+            }
+            return item;
+          });
+        });
+      } else {
+        // If the item is not in the cart, add it
+        setCartItems((prevCartItems) => [...prevCartItems, itemToAdd]);
+      }
+    });
   };
 
   const removeItem = (cartItem: CartItem) => {
@@ -125,6 +157,7 @@ export function CartWrapper({ children }: CartType) {
       value={{
         cartItems,
         addItem,
+        addItems,
         removeItem,
         clearCart,
         handleTotalQuantity,

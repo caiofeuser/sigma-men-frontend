@@ -82,7 +82,7 @@ export default function Checkout() {
   }, []);
 
   return (
-    <Flex justifyContent="center" onClick={() => console.log(pathName)}>
+    <Flex justifyContent="center">
       <Box bg="white" m="2rem" px="2rem" w="100%" borderRadius="2rem">
         <Heading as="h3" size="2xl" m="2rem" mb="4rem" textAlign="center">
           Carrinho de compras

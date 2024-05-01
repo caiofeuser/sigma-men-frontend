@@ -7,7 +7,7 @@ export default function TreatmentCard(props: TreatmentType) {
   return (
     <Box
       ml="0.75rem"
-      bg="beige"
+      bg="beige.100"
       style={{
         minHeight: "17rem",
         minWidth: "27rem",

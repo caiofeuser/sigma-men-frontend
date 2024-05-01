@@ -1,38 +1,67 @@
 ﻿"use client";
 
 import { Box, Flex, Heading, Text, Button } from "@chakra-ui/react";
-import React from "react";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
+import useAxios from "@/api/api";
+import { useFormsIndex, FormsIndexContextType } from "@/context/forms";
 
 export default function Forms() {
   const router = useRouter();
   const currentPath = usePathname();
+  const { getSurveys } = useAxios();
+  const { setSurvey } = useFormsIndex() as FormsIndexContextType;
 
   const treatments = [
     {
       name: "Queda de cabelo",
       icon: <Image width="72" alt="hairLoss" height="72" src="hairLoss.svg" />,
+      id: 1,
+      path: "queda-de-cabelo",
     },
     {
       name: "Disfunção erétil",
       icon: (
         <Image width="72" alt="hairLoss" height="72" src="disfuction.svg" />
       ),
+      id: 2,
+      path: "disfuncao-eretil",
     },
     {
       name: "Sono",
       icon: <Image width="72" alt="hairLoss" height="72" src="sleep.svg" />,
+      id: 3,
+      path: "sono",
     },
     {
       name: "Perda de peso",
       icon: (
         <Image width="72" alt="hairLoss" height="72" src="weightLoss.svg" />
       ),
+      id: 4,
+      path: "perda-de-peso",
     },
   ];
+
+  const handleGetSurvey = (survey_id: number) => {
+    getSurveys(survey_id).then((response) => {
+      setSurvey(response.data);
+    });
+  };
+
+  const handleClickTreatment = (survey_id: number) => {
+    const surveyName = treatments.find(
+      (treatment) => treatment.id === survey_id
+    )?.path;
+    if (surveyName) {
+      localStorage.setItem("survey_name", surveyName.toString());
+    }
+    handleGetSurvey(survey_id);
+    router.push(`${currentPath}/terms-and-conditions`);
+  };
+
   return (
-    <Flex flexDir="column" alignItems="center" bg="beige">
+    <Flex flexDir="column" alignItems="center" bg="beige.100">
       <Flex
         flexDir="column"
         bg="white"
@@ -54,9 +83,7 @@ export default function Forms() {
                 w="180px"
                 borderRadius="50%"
                 bg="brand.50"
-                onClick={() =>
-                  router.push(`${currentPath}/terms-and-conditions`)
-                }
+                onClick={() => handleClickTreatment(treatment.id)}
                 _hover={{
                   background: "brand.100",
                   cursor: "pointer",

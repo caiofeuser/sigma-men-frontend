@@ -21,6 +21,7 @@ import { CheckoutItems } from "@/types";
 import Image from "next/image";
 import { useCartContext } from "@/context/cart";
 import { Spinner } from "@chakra-ui/react";
+import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 
 export default function Success() {
   const searchParams = useSearchParams();
@@ -32,13 +33,6 @@ export default function Success() {
   const { clearCart } = useCartContext();
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     setShowCheckIcon(true);
-  //   }, 1000);
-  //   return () => clearTimeout(timer);
-  // }, []);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -133,9 +127,23 @@ export default function Success() {
               </TableContainer>
             </Flex>
           </Flex>
-          <Flex justifyContent="center" mt="2rem">
-            <Button colorScheme="brand" onClick={() => router.push("/")}>
+          <Flex justifyContent="center" mt="2rem" columnGap={32}>
+            <Button
+              colorScheme="brand"
+              leftIcon={<ArrowBackIcon />}
+              onClick={() => router.push("/")}
+              rounded="full"
+            >
               Voltar para a página inicial
+            </Button>
+            <Button
+              colorScheme="brand"
+              rounded="full"
+              variant="outline"
+              rightIcon={<ArrowForwardIcon />}
+              onClick={() => router.push("/purchase")}
+            >
+              Ver outras compras
             </Button>
           </Flex>
         </>

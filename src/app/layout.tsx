@@ -28,6 +28,7 @@ import {
 import { useRouter } from "next/navigation";
 import { CartWrapper } from "@/context/cart";
 import { NavabarWrapper } from "@/context/navbar";
+import { FormsIndexWrapper } from "@/context/forms";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -65,92 +66,94 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <div>
           <Providers>
             <NavabarWrapper>
-              <CartWrapper>
-                <Navbar
-                  onOpen={onOpen}
-                  drawerRef={drawerRef}
-                  isNavbarVisible={isNavbarVisible}
-                />
-                <Drawer
-                  isOpen={isOpen}
-                  placement="left"
-                  onClose={onClose}
-                  finalFocusRef={drawerRef}
-                >
-                  <DrawerOverlay />
-                  <DrawerContent>
-                    <DrawerCloseButton />
-                    <DrawerBody mt="2rem">
-                      <Box mb="4rem">
-                        <Heading size="md">Tratamentos</Heading>
-                        <Flex flexDir="column" mt="1rem">
-                          <UnorderedList
-                            color="brand.500"
-                            style={{ marginLeft: "2rem" }}
-                          >
-                            {treatments.map((treatment, index) => (
-                              <ListItem key={index} mt="1.5rem">
-                                <Text color="#000">{treatment.name}</Text>
-                              </ListItem>
-                            ))}
-                          </UnorderedList>
-                        </Flex>
-                      </Box>
-                      <Divider />
-                      <Box mt="4rem">
-                        <Heading size="md">Suporte</Heading>
-                        <Flex flexDir="column" mt="1rem">
-                          <UnorderedList
-                            color="brand.500"
-                            style={{ marginLeft: "2rem" }}
-                          >
-                            {suportLinks.map((treatment, index) => (
-                              <ListItem key={index} mt="1.5rem">
-                                <Text color="#000">{treatment.name}</Text>
-                              </ListItem>
-                            ))}
-                          </UnorderedList>
-                        </Flex>
-                      </Box>
-                    </DrawerBody>
-
-                    <DrawerFooter>
-                      <Flex flexDir="column" rowGap="1rem">
-                        <Flex
-                          alignItems="center"
-                          justifyContent="center"
-                          gap="1rem"
-                        >
-                          <Text as="b">Sua conta, Usuário</Text>
-                          <Avatar
-                            margin={1}
-                            mr="1rem"
-                            color="black"
-                            size="sm"
-                            name="Dan Abrahmov"
-                            src="https://bit.ly/dan-abramov"
-                          />
-                        </Flex>
-                        <Box textAlign="right">
-                          <Button
-                            colorScheme="brand"
-                            onClick={() => {
-                              router.push("/login");
-                              onClose();
-                            }}
-                            leftIcon={<RiLogoutCircleFill />}
-                            rounded="full"
-                            variant="ghost"
-                          >
-                            Sair
-                          </Button>
+              <FormsIndexWrapper>
+                <CartWrapper>
+                  <Navbar
+                    onOpen={onOpen}
+                    drawerRef={drawerRef}
+                    isNavbarVisible={isNavbarVisible}
+                  />
+                  <Drawer
+                    isOpen={isOpen}
+                    placement="left"
+                    onClose={onClose}
+                    finalFocusRef={drawerRef}
+                  >
+                    <DrawerOverlay />
+                    <DrawerContent>
+                      <DrawerCloseButton />
+                      <DrawerBody mt="2rem">
+                        <Box mb="4rem">
+                          <Heading size="md">Tratamentos</Heading>
+                          <Flex flexDir="column" mt="1rem">
+                            <UnorderedList
+                              color="brand.500"
+                              style={{ marginLeft: "2rem" }}
+                            >
+                              {treatments.map((treatment, index) => (
+                                <ListItem key={index} mt="1.5rem">
+                                  <Text color="#000">{treatment.name}</Text>
+                                </ListItem>
+                              ))}
+                            </UnorderedList>
+                          </Flex>
                         </Box>
-                      </Flex>
-                    </DrawerFooter>
-                  </DrawerContent>
-                </Drawer>
-                <div style={{ marginTop: "95px" }}>{children}</div>
-              </CartWrapper>
+                        <Divider />
+                        <Box mt="4rem">
+                          <Heading size="md">Suporte</Heading>
+                          <Flex flexDir="column" mt="1rem">
+                            <UnorderedList
+                              color="brand.500"
+                              style={{ marginLeft: "2rem" }}
+                            >
+                              {suportLinks.map((treatment, index) => (
+                                <ListItem key={index} mt="1.5rem">
+                                  <Text color="#000">{treatment.name}</Text>
+                                </ListItem>
+                              ))}
+                            </UnorderedList>
+                          </Flex>
+                        </Box>
+                      </DrawerBody>
+
+                      <DrawerFooter>
+                        <Flex flexDir="column" rowGap="1rem">
+                          <Flex
+                            alignItems="center"
+                            justifyContent="center"
+                            gap="1rem"
+                          >
+                            <Text as="b">Sua conta, Usuário</Text>
+                            <Avatar
+                              margin={1}
+                              mr="1rem"
+                              color="black"
+                              size="sm"
+                              name="Dan Abrahmov"
+                              src="https://bit.ly/dan-abramov"
+                            />
+                          </Flex>
+                          <Box textAlign="right">
+                            <Button
+                              colorScheme="brand"
+                              onClick={() => {
+                                router.push("/login");
+                                onClose();
+                              }}
+                              leftIcon={<RiLogoutCircleFill />}
+                              rounded="full"
+                              variant="ghost"
+                            >
+                              Sair
+                            </Button>
+                          </Box>
+                        </Flex>
+                      </DrawerFooter>
+                    </DrawerContent>
+                  </Drawer>
+                  <div style={{ marginTop: "95px" }}>{children}</div>
+                </CartWrapper>
+              </FormsIndexWrapper>
             </NavabarWrapper>
           </Providers>
         </div>

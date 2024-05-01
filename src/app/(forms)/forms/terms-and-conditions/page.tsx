@@ -4,8 +4,11 @@ import { Box, Flex, Heading, Text, Button } from "@chakra-ui/react";
 import React from "react";
 import Image from "next/image";
 import Head from "next/head";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function TermsAndConditions() {
+  const router = useRouter();
+  const currentPath = usePathname();
   const listStyle = {
     marginTop: "1rem",
   };
@@ -62,6 +65,7 @@ export default function TermsAndConditions() {
             variant="solid"
             minW="200px"
             colorScheme="brand"
+            onClick={() => router.push(`survey`)}
           >
             Eu aceito
           </Button>

@@ -20,7 +20,7 @@ export default function Question(props: QuestionProps) {
   const [isShowingAnswer, setIsShowingAnswer] = useState(false);
   return (
     <Box
-      bg="beige"
+      bg="beige.100"
       borderRadius="2rem"
       minH="7rem"
       onClick={() => setIsShowingAnswer(!isShowingAnswer)}
