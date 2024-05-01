@@ -5,9 +5,21 @@ import { BsPrescription2 } from "react-icons/bs";
 import { Search2Icon } from "@chakra-ui/icons";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useFormsIndex, FormsIndexContextType } from "@/context/forms";
 
 export default function BannerHero() {
   const router = useRouter();
+  const { setPosition } = useFormsIndex() as FormsIndexContextType;
+
+  const handleClickTreatments = () => {
+    localStorage.setItem("lastOption", "");
+    localStorage.setItem("survey_name", "");
+    localStorage.setItem("survey_id", "");
+    setPosition(0);
+
+    router.push("/forms");
+  };
+
   const content = [
     {
       name: "Tratamentos customizados",
@@ -121,7 +133,7 @@ export default function BannerHero() {
           gap={8}
           padding="2rem 4rem"
           fontSize="1.25rem"
-          onClick={() => router.push("/forms")}
+          onClick={() => handleClickTreatments()}
         >
           <Search2Icon />
           Conheça nossos tratamentos

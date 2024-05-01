@@ -14,6 +14,8 @@ import useAxios from "@/api/api";
 import Image from "next/image";
 import { ArrowForwardIcon, CloseIcon } from "@chakra-ui/icons";
 import { useCartContext } from "@/context/cart";
+import { CartContextType } from "@/types";
+import { useNavbarContext } from "@/context/navbar";
 
 export default function Results() {
   const lastOptionString = localStorage.getItem("lastOption");
@@ -24,6 +26,7 @@ export default function Results() {
   const { getSurveyResults, getProductsFilterdOnResult } = useAxios();
   const [recomendedProducts, setRecomendedProducts] = useState<any[]>([]);
   const { addItems } = useCartContext();
+  const { setIsOpenCart } = useNavbarContext();
 
   const getResult = () => {
     const surveyName = survey
@@ -69,6 +72,7 @@ export default function Results() {
       formatToCart(product)
     );
     addItems(formatedProducts);
+    setIsOpenCart(true);
   };
 
   return (
@@ -120,7 +124,6 @@ export default function Results() {
                         alt="hero"
                         width={160}
                         height={176}
-                        // layout="responsive"
                       />
                     </Box>
                     <Flex

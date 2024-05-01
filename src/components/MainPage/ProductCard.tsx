@@ -19,25 +19,6 @@ export default function ProductCard(props: ProductCardProps) {
     useNavbarContext();
   const router = useRouter();
 
-  // const handleClickProduct = (
-  //   e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  // ) => {
-  //   router.push("https://buy.stripe.com/test_00g4hU2E94Ci6o8000");
-  //   console.log({ title, price });
-  // };
-
-  // const handleClickProduct = (item: CartItem) => {
-  //   addItem({
-  //     title,
-  //     price: price || 0,
-  //     id: 0,
-  //     quantity: 1,
-  //   });
-  //   if (!isOpenCart) {
-  //     setIsOpenCart(true);
-  //   }
-  // };
-
   const src = cardData?.image[0];
 
   return (

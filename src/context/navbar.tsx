@@ -1,15 +1,16 @@
 ﻿"use client";
 import { createContext, useState, useContext } from "react";
-import { CartItem, CartContextType } from "@/types";
 
-const NavbarContext = createContext({
-  isOpenCart: false,
-  setIsOpenCart: (isOpenCart: boolean) => {},
-  setIsNavbarVisible: (isNavbarVisible: boolean) => {},
-  isNavbarVisible: true,
-  shouldCloseCartMenu: true,
-  setShouldCloseCartMenu: (shouldCloseCartMenu: boolean) => {},
-});
+export interface NavbarContextType {
+  isOpenCart: boolean;
+  setIsOpenCart: (isOpenCart: boolean) => void;
+  setIsNavbarVisible: (isNavbarVisible: boolean) => void;
+  isNavbarVisible: boolean;
+  shouldCloseCartMenu: boolean;
+  setShouldCloseCartMenu: (shouldCloseCartMenu: boolean) => void;
+}
+
+const NavbarContext = createContext({} as NavbarContextType);
 
 export function NavabarWrapper({ children }: { children: React.ReactNode }) {
   const [isOpenCart, setIsOpenCart] = useState<boolean>(false);
