@@ -76,3 +76,18 @@ export interface SurveyType {
 }
 
 export interface RecomendedProductsType {}
+
+export interface ContactInformationType {
+  phone: string;
+  instagram: string;
+  email: string;
+  address: string;
+}
+
+export interface ContactInfo {
+  name: string;
+  href: string;
+  icon: JSX.Element;
+  content: string;
+  key: string;
+}

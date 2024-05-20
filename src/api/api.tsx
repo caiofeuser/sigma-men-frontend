@@ -1,5 +1,6 @@
 ﻿import { CartItem } from "@/types";
 import axios from "axios";
+import { get } from "http";
 //import jwt_decode from "jwt-decode";
 //import { setAuthToken } from "../utils/setAuthToken";
 
@@ -141,6 +142,35 @@ const useAxios = () => {
     }
   };
 
+  const getPartnershipStatus = () => {
+    try {
+      const response = axiosInstance.get("/api/parternships-is-open/");
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const updatePartnershipStatus = (status: boolean) => {
+    try {
+      const response = axiosInstance.post("/api/partnerships-update/", {
+        status,
+      });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getContactInfo = async () => {
+    try {
+      const response = await axiosInstance.get("/api/contact-information/");
+      return response;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   return {
     postCartCheckout,
     getAllProducts,
@@ -150,6 +180,9 @@ const useAxios = () => {
     getSurveys,
     getSurveyResults,
     getProductsFilterdOnResult,
+    getPartnershipStatus,
+    updatePartnershipStatus,
+    getContactInfo,
   };
 };
 
