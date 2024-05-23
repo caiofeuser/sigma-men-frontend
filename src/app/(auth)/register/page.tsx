@@ -18,10 +18,12 @@ import { useRouter } from "next/navigation";
 
 export default function Register() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password1, setPassword1] = useState("");
+  const [password2, setPassword2] = useState("");
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [show, setShow] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
+  const [showPassword2, setShowPassword2] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [birthDate, setBirthDate] = useState(new Date());
 
@@ -95,27 +97,51 @@ export default function Register() {
               h="3rem"
               focusBorderColor="brand.500"
               colorScheme="brand"
-              placeholder="dd/mm/aaaa"
+              placeholder="Data de nascimento"
               width="100%"
               mb="2rem"
             />
           </FormControl>
-          <InputGroup>
+          <InputGroup mb="2rem">
             <Input
               h="3rem"
               colorScheme="brand"
-              type={show ? "text" : "password"}
+              type={showPassword1 ? "text" : "password"}
               id="password"
               focusBorderColor="brand.500"
               placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={password1}
+              onChange={(e) => setPassword1(e.target.value)}
             />
             <InputRightElement display="flex" alignItems="center" h="3rem">
               <IconButton
                 aria-label="Mostrar senha"
-                onClick={() => setShow(!show)}
-                icon={show ? <ViewOffIcon /> : <ViewIcon />}
+                onClick={() => setShowPassword1(!showPassword1)}
+                icon={showPassword1 ? <ViewOffIcon /> : <ViewIcon />}
+                colorScheme="brand"
+                size="sm"
+                variant="ghost"
+                rounded="full"
+                alignContent="center"
+              />
+            </InputRightElement>
+          </InputGroup>
+          <InputGroup>
+            <Input
+              h="3rem"
+              colorScheme="brand"
+              type={showPassword2 ? "text" : "password"}
+              id="password"
+              focusBorderColor="brand.500"
+              placeholder="Confirme sua senha"
+              value={password2}
+              onChange={(e) => setPassword2(e.target.value)}
+            />
+            <InputRightElement display="flex" alignItems="center" h="3rem">
+              <IconButton
+                aria-label="Mostrar senha"
+                onClick={() => setShowPassword2(!showPassword2)}
+                icon={showPassword2 ? <ViewOffIcon /> : <ViewIcon />}
                 colorScheme="brand"
                 size="sm"
                 variant="ghost"

@@ -103,6 +103,14 @@ export default function Login() {
               Não tem uma conta? Registre-se!
             </Link>
           </Box>
+          <Box mt="0.5rem" textAlign="center">
+            <Link
+              color="brand.500"
+              onClick={() => router.push("/forgot-password")}
+            >
+              Esqueceu sua senha?
+            </Link>
+          </Box>
         </Box>
       </Box>
     </Flex>

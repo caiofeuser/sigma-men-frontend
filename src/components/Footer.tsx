@@ -15,7 +15,7 @@ import Link from "next/link";
 import Image from "next/image";
 import api from "@/api/api";
 import { ContactInformationType, ContactInfo } from "@/types/index";
-
+import { useRouter } from "next/navigation";
 // Create a context to store the button status
 const ButtonStatusContext = createContext({ isPartnershipAvailable: false });
 
@@ -183,16 +183,17 @@ export default function Footer() {
 // Separate component for rendering the button
 function FooterButton() {
   const { isPartnershipAvailable } = useButtonStatus();
-
+  const router = useRouter();
   return (
     <>
       {isPartnershipAvailable && (
-        <Flex justifyContent="center" alignItems="center" gap={4}>
+        <Flex justifyContent="center" alignItems="center" gap={4} mt={24}>
           <Button
-            colorScheme="brand"
-            variant="outline"
-            _hover={{ background: "var(--chakra-colors-black-700)" }}
+            bg="black.100"
+            textColor="white"
+            _hover={{ background: "var(--chakra-colors-brand-700)" }}
             size="lg"
+            onClick={() => router.push("/work-with-us")}
           >
             Seja um parceiro
           </Button>

@@ -1,9 +1,5 @@
 "use client";
-import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import { ChakraProvider } from "@chakra-ui/react";
 import { Box, Heading, Flex, Text } from "@chakra-ui/react";
 import BannerHero from "@/components/MainPage/BannerHero";
 import Carrosel from "@/components/MainPage/Carrosel";
@@ -14,8 +10,6 @@ import { useNavbarContext } from "@/context/navbar";
 import { useEffect, useRef, useState, Fragment } from "react";
 import useAxios from "@/api/api";
 import { ProductType } from "@/types";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const ProductTriggerRef = useRef(null);

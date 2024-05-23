@@ -77,7 +77,12 @@ export default function Survey() {
   //  }, [radioValue]);
 
   return (
-    <Flex flexDir="column" alignItems="center" bg="beige.100">
+    <Flex
+      flexDir="column"
+      alignItems="center"
+      bg="beige.100"
+      onClick={() => console.log(questions)}
+    >
       <Flex
         flexDir="column"
         bg="white"
