@@ -1,5 +1,5 @@
 ﻿"use client";
-import React from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -8,17 +8,35 @@ import {
   Icon,
   Button,
   IconButton,
+  Input,
 } from "@chakra-ui/react";
 import { FaUser } from "react-icons/fa";
+import { User } from "@/types";
+import { useAuth } from "@/context/authentication";
 
-export default function UserInfo() {
-  const userInfo = {
-    id: 1,
-    name: "Caio",
-    lastName: "Feuser",
-    email: "caiofeuserdm@gmail.com",
-    idade: 22,
+export default function UserInfo(props: { user: User }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const { changeUserInfo } = useAuth();
+  const { user } = props;
+  const [newUserInfo, setNewUserInfo] = useState<User>({ ...user });
+
+  const handleInputChange = (field: keyof User, value: string | number) => {
+    setNewUserInfo((prevUserInfo) => ({
+      ...prevUserInfo,
+      [field]: value,
+    }));
   };
+
+  useEffect(() => {
+    if (!isEditing) {
+      changeUserInfo(
+        newUserInfo.first_name,
+        newUserInfo.last_name,
+        newUserInfo?.age || 0
+      );
+      localStorage.setItem("user", JSON.stringify(newUserInfo));
+    }
+  }, [isEditing]);
 
   return (
     <Box w="60%" mt="2rem" p="2rem" textAlign="center">
@@ -36,23 +54,47 @@ export default function UserInfo() {
       >
         <Flex gap="0.5rem">
           <Text as="b">Nome:</Text>
-          <Text>{userInfo.name}</Text>
+          {isEditing ? (
+            <Input
+              value={newUserInfo.first_name}
+              onChange={(e) => handleInputChange("first_name", e.target.value)}
+            />
+          ) : (
+            <Text>{user.first_name}</Text>
+          )}
         </Flex>
         <Flex gap="0.5rem">
           <Text as="b">Sobrenome:</Text>
-          <Text>{userInfo.lastName}</Text>
+          {isEditing ? (
+            <Input
+              value={newUserInfo.last_name}
+              onChange={(e) => handleInputChange("last_name", e.target.value)}
+            />
+          ) : (
+            <Text>{user.last_name}</Text>
+          )}
         </Flex>
-        <Flex gap="0.5rem">
-          <Text as="b">Email:</Text>
-          <Text>{userInfo.email}</Text>
-        </Flex>
-        <Flex gap="0.5rem">
+        {/* <Flex gap="0.5rem">
           <Text as="b">Idade:</Text>
-          <Text>{userInfo.idade}</Text>
-        </Flex>
+          {isEditing ? (
+            <Input
+              type="number"
+              value={newUserInfo.age}
+              onChange={(e) =>
+                handleInputChange("age", parseInt(e.target.value))
+              }
+            />
+          ) : (
+            <Text>{user.age}</Text>
+          )}
+        </Flex> */}
         <Box textAlign="right">
-          <Button colorScheme="brand" rounded="full">
-            Alterar
+          <Button
+            colorScheme="brand"
+            rounded="full"
+            onClick={() => setIsEditing(!isEditing)}
+          >
+            {isEditing ? "Salvar" : "Alterar"}
           </Button>
         </Box>
       </Flex>

@@ -91,3 +91,16 @@ export interface ContactInfo {
   content: string;
   key: string;
 }
+
+export interface User {
+  pk: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  age?: number;
+}
+export interface AuthTokens {
+  access: string;
+  refresh: string;
+  user: User;
+}

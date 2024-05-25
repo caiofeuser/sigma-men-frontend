@@ -15,17 +15,15 @@ import {
 import { RiLoginCircleFill } from "react-icons/ri";
 import { Icon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/authentication";
 
 export default function Register() {
-  const [email, setEmail] = useState("");
-  const [password1, setPassword1] = useState("");
-  const [password2, setPassword2] = useState("");
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [showPassword1, setShowPassword1] = useState(false);
-  const [showPassword2, setShowPassword2] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [birthDate, setBirthDate] = useState(new Date());
+  const [email, setEmail] = useState<string>("");
+  const [password1, setPassword1] = useState<string>("");
+  const [password2, setPassword2] = useState<string>("");
+  const [showPassword1, setShowPassword1] = useState<Boolean>(false);
+  const [showPassword2, setShowPassword2] = useState<Boolean>(false);
+  const { registerUser } = useAuth();
 
   const router = useRouter();
 
@@ -38,34 +36,6 @@ export default function Register() {
           </Heading>
         </Box>
         <Box>
-          <Flex gap="1rem">
-            <FormControl>
-              <Input
-                mb="2rem"
-                focusBorderColor="brand.500"
-                colorScheme="brand"
-                type="text"
-                id="name"
-                placeholder="Nome"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                h="3rem"
-              />
-            </FormControl>
-            <FormControl>
-              <Input
-                mb="2rem"
-                focusBorderColor="brand.500"
-                colorScheme="brand"
-                type="text"
-                id="lastName"
-                placeholder="Sobrenome"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-                h="3rem"
-              />
-            </FormControl>
-          </Flex>
           <FormControl>
             <Input
               mb="2rem"
@@ -79,35 +49,12 @@ export default function Register() {
               h="3rem"
             />
           </FormControl>
-          <FormControl>
-            <Input
-              mb="2rem"
-              focusBorderColor="brand.500"
-              colorScheme="brand"
-              type="tel"
-              id="phoneNumber"
-              placeholder="Telefone"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              h="3rem"
-            />
-          </FormControl>
-          <FormControl>
-            <Input
-              h="3rem"
-              focusBorderColor="brand.500"
-              colorScheme="brand"
-              placeholder="Data de nascimento"
-              width="100%"
-              mb="2rem"
-            />
-          </FormControl>
           <InputGroup mb="2rem">
             <Input
               h="3rem"
               colorScheme="brand"
               type={showPassword1 ? "text" : "password"}
-              id="password"
+              id="password1"
               focusBorderColor="brand.500"
               placeholder="Senha"
               value={password1}
@@ -131,7 +78,7 @@ export default function Register() {
               h="3rem"
               colorScheme="brand"
               type={showPassword2 ? "text" : "password"}
-              id="password"
+              id="password2"
               focusBorderColor="brand.500"
               placeholder="Confirme sua senha"
               value={password2}
@@ -153,8 +100,7 @@ export default function Register() {
         </Box>
         <Flex justifyContent="center" mt="2rem">
           <Button
-            // onClick={() => handleSubmit()}
-            onClick={() => router.push("/")}
+            onClick={() => registerUser(email, password1, password2)}
             colorScheme="black"
             rounded="full"
             w="50%"

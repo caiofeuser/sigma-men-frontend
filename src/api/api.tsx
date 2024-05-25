@@ -1,70 +1,93 @@
-﻿import { CartItem } from "@/types";
+﻿// const authTokenWithRefresh = JSON.parse(localStorage.getItem("authTokens"));
+// console.log(authTokenWithRefresh);
+
+// try {
+//   const response = await axios.post(
+//     "http://localhost:8000/auth_api/token/refresh/",
+//     {
+//       refresh: authTokenWithRefresh.refresh,
+//     }
+//   );
+
+import { CartItem } from "@/types";
 import axios from "axios";
-import { get } from "http";
-//import jwt_decode from "jwt-decode";
-//import { setAuthToken } from "../utils/setAuthToken";
+import dayjs from "dayjs";
+import jwtDecode from "jwt-decode";
+import { useAuth } from "@/context/authentication";
+import { useRouter } from "next/navigation";
 
 interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
+  access: string;
+  refresh: string;
 }
 
 const useAxios = () => {
-  //const { authTokens, setAuthTokens, setUser } = useAuth();
+  const { authToken, setAuthToken, setUser } = useAuth();
+  const router = useRouter();
 
-  const axiosInstance = axios.create({
+  const axiosPublicInstance = axios.create({
     baseURL: "http://localhost:8000",
     headers: {
       "Content-Type": "application/json",
-      // headers: {Authorization: `Bearer ${authTokens.accessToken}`},
     },
   });
 
-  // axiosInstance.interceptors.request.use(async (req) => {
-  //   const user = jwt_decode<AuthTokens>(authTokens.access);
-  //   const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
+  const axiosPrivateInstance = axios.create({
+    baseURL: "http://localhost:8000",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
-  //   if (!isExpired) return req;
+  axiosPrivateInstance.interceptors.request.use(async (req) => {
+    if (!authToken) {
+      router.push("/login"); // Redireciona para a página de login se não houver token
+      throw new axios.Cancel("Unauthorized");
+    }
 
-  //   try {
-  //     const response = await axios.post(`${baseURL}/token/refresh/`, {
-  //       refresh: authTokens.refresh,
-  //     });
+    const isExpired =
+      dayjs.unix(jwtDecode(authToken.access).exp).diff(dayjs()) < 1;
+    if (!isExpired) {
+      req.headers.Authorization = `Bearer ${authToken.access}`;
+      return req;
+    }
 
-  //     localStorage.setItem("authTokens", JSON.stringify(response.data));
+    const authTokenWithRefresh = JSON.parse(localStorage.getItem("authTokens"));
+    console.log(authTokenWithRefresh);
 
-  //     setAuthTokens(response.data);
-  //     setUser(jwt_decode<AuthTokens>(response.data.access));
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/auth_api/token/refresh/",
+        {
+          refresh: authTokenWithRefresh.refresh,
+        }
+      );
 
-  //     req.headers.Authorization = `Bearer ${response.data.access}`;
-  //     return req;
-  //   } catch (error) {
-  //     // Handle error
-  //     throw error;
-  //   }
-  // });
+      localStorage.setItem("authTokens", JSON.stringify(response.data));
+      setAuthToken(response.data);
+      setUser(jwtDecode(response.data.access));
+
+      req.headers.Authorization = `Bearer ${response.data.access}`;
+      return req;
+    } catch (error) {
+      router.push("/login"); // Redireciona para a página de login se a renovação do token falhar
+      throw new axios.Cancel("Unauthorized");
+    }
+  });
 
   const postCartCheckout = async (cart: CartItem[]) => {
-    const formatedData = cart.map((item) => {
-      return {
-        price_id: item.stripeID,
-        quantity: item.quantity,
-      };
-    });
+    const formattedData = cart.map((item) => ({
+      price_id: item.stripeID,
+      quantity: item.quantity,
+    }));
 
     try {
-      const response = await axiosInstance.post("/api/stripe/checkout/", {
-        formatedData,
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const getAllProducts = async () => {
-    try {
-      const response = await axiosInstance.get("/api/stripe/products/");
+      const response = await axiosPrivateInstance.post(
+        "/api/stripe/checkout/",
+        {
+          formattedData,
+        }
+      );
       return response.data;
     } catch (error) {
       throw error;
@@ -73,8 +96,7 @@ const useAxios = () => {
 
   const getProductsOfCheckout = async (checkoutID: string) => {
     try {
-      // stripe/checkout/products/?session_id=cs_test_b105dqvnclgeFIeHPTXbpPVIayovVhGcduMiaZeEp4k6O5npcmeDGEIofn
-      const response = await axiosInstance.get(
+      const response = await axiosPrivateInstance.get(
         `/api/stripe/checkout/products/?session_id=${checkoutID}`
       );
       return response.data;
@@ -83,9 +105,20 @@ const useAxios = () => {
     }
   };
 
+  const getAllProducts = async () => {
+    try {
+      const response = await axiosPublicInstance.get("/api/stripe/products/");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const getSurveys = async (survey_id: number) => {
     try {
-      const response = await axiosInstance.get(`/api/survey/${survey_id}`);
+      const response = await axiosPublicInstance.get(
+        `/api/survey/${survey_id}`
+      );
       return response;
     } catch (error) {
       throw error;
@@ -94,7 +127,7 @@ const useAxios = () => {
 
   const getSurveyQuestions = async (survey: string) => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosPublicInstance.get(
         `/api/survey/${survey}/questions/`
       );
       return response;
@@ -105,7 +138,7 @@ const useAxios = () => {
 
   const getQuestionsOptions = async (questionID: number) => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosPublicInstance.get(
         `/api/question/${questionID}/options/`
       );
       return response;
@@ -116,7 +149,7 @@ const useAxios = () => {
 
   const getSurveyResults = async (survey_name: string, track_id: number) => {
     try {
-      const response = await axiosInstance.get(
+      const response = await axiosPublicInstance.get(
         `/api/result/${survey_name}/${track_id}/`
       );
       return response;
@@ -125,37 +158,45 @@ const useAxios = () => {
     }
   };
 
-  const getProductsFilterdOnResult = (
+  const getProductsFilteredOnResult = async (
     survey_name: string,
     track_id: number
   ) => {
     try {
-      const response = axiosInstance.get(`/api/stripe/treatments/products/`, {
-        params: {
-          survey: survey_name,
-          track: track_id,
-        },
-      });
+      const response = await axiosPublicInstance.get(
+        `/api/stripe/treatments/products/`,
+        {
+          params: {
+            survey: survey_name,
+            track: track_id,
+          },
+        }
+      );
       return response;
     } catch (error) {
       throw error;
     }
   };
 
-  const getPartnershipStatus = () => {
+  const getPartnershipStatus = async () => {
     try {
-      const response = axiosInstance.get("/api/parternships-is-open/");
+      const response = await axiosPublicInstance.get(
+        "/api/partnerships-is-open/"
+      );
       return response;
     } catch (error) {
       throw error;
     }
   };
 
-  const updatePartnershipStatus = (status: boolean) => {
+  const updatePartnershipStatus = async (status: boolean) => {
     try {
-      const response = axiosInstance.post("/api/partnerships-update/", {
-        status,
-      });
+      const response = await axiosPublicInstance.post(
+        "/api/partnerships-update/",
+        {
+          status,
+        }
+      );
       return response;
     } catch (error) {
       throw error;
@@ -164,22 +205,24 @@ const useAxios = () => {
 
   const getContactInfo = async () => {
     try {
-      const response = await axiosInstance.get("/api/contact-information/");
+      const response = await axiosPublicInstance.get(
+        "/api/contact-information/"
+      );
       return response;
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      throw error;
     }
   };
 
   return {
     postCartCheckout,
-    getAllProducts,
     getProductsOfCheckout,
+    getAllProducts,
     getSurveyQuestions,
     getQuestionsOptions,
     getSurveys,
     getSurveyResults,
-    getProductsFilterdOnResult,
+    getProductsFilteredOnResult,
     getPartnershipStatus,
     updatePartnershipStatus,
     getContactInfo,
