@@ -49,6 +49,7 @@ export default function Checkout() {
 
   const handleCheckout = () => {
     setIsButtonLoading(true);
+    console.log(cartItems);
     postCartCheckout(cartItems).then(
       (data) => {
         router.push(data.url);

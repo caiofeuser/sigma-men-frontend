@@ -12,7 +12,7 @@
 import { CartItem } from "@/types";
 import axios from "axios";
 import dayjs from "dayjs";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
 
@@ -76,7 +76,7 @@ const useAxios = () => {
   });
 
   const postCartCheckout = async (cart: CartItem[]) => {
-    const formattedData = cart.map((item) => ({
+    const formatedData = cart.map((item) => ({
       price_id: item.stripeID,
       quantity: item.quantity,
     }));
@@ -85,7 +85,7 @@ const useAxios = () => {
       const response = await axiosPrivateInstance.post(
         "/api/stripe/checkout/",
         {
-          formattedData,
+          formatedData: formatedData,
         }
       );
       return response.data;

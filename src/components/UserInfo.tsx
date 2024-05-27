@@ -34,7 +34,6 @@ export default function UserInfo(props: { user: User }) {
         newUserInfo.last_name,
         newUserInfo?.age || 0
       );
-      localStorage.setItem("user", JSON.stringify(newUserInfo));
     }
   }, [isEditing]);
 
