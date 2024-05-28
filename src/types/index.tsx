@@ -104,3 +104,19 @@ export interface AuthTokens {
   refresh: string;
   user: User;
 }
+
+export interface OrderType {
+  order: {
+    id: string;
+    date: string;
+    amount_total: number;
+    payment_status: string;
+    line_items: {
+      data: {
+        description: string;
+        amount_total: number;
+        quantity: number;
+      }[];
+    };
+  };
+}

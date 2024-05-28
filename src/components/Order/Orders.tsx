@@ -17,52 +17,13 @@ import { CiShoppingBasket } from "react-icons/ci";
 import Order from "./Order";
 import { useRouter, usePathname } from "next/navigation";
 import useAxios from "@/api/api";
-
-interface OrderType {
-  id: number;
-  date: string;
-  total: number;
-  orderNumber: string;
-  items: {
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-}
+import { OrderType } from "@/types";
 
 export default function Orders() {
   const router = useRouter();
   const pathname = usePathname();
   const { getOrders } = useAxios();
-  const [orders, setOrders] = useState<any[]>([]);
-  // const orders = [
-  //   {
-  //     id: 1,
-  //     orderNumber: "213414512341",
-  //     date: "2021/09/01",
-  //     total: 100,
-  //     items: [
-  //       {
-  //         name: "Produto 1",
-  //         price: 100,
-  //         quantity: 1,
-  //       },
-  //     ],
-  //   },
-  //   {
-  //     id: 2,
-  //     orderNumber: "516444512341",
-  //     date: "2021/09/02",
-  //     total: 200,
-  //     items: [
-  //       {
-  //         name: "Produto 2",
-  //         price: 200,
-  //         quantity: 1,
-  //       },
-  //     ],
-  //   },
-  // ];
+  const [orders, setOrders] = useState<OrderType[]>([]);
 
   useEffect(() => {
     getOrders().then(
@@ -106,8 +67,8 @@ export default function Orders() {
         </Grid>
       </Flex>
       <Flex p="2rem" pt="0" flexDir="column" rowGap={4}>
-        {orders?.map((order: OrderType) => (
-          <Order key={order.id} order={order} />
+        {orders?.map((order: OrderType, index: number) => (
+          <Order key={index} order={order} />
         ))}
       </Flex>
     </Box>

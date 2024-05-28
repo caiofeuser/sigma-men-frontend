@@ -19,25 +19,12 @@ import {
   Tooltip,
 } from "@chakra-ui/react";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
-
+import { OrderType } from "@/types";
 import { useState } from "react";
-interface OrderType {
-  order: {
-    id: number;
-    date: string;
-    amount_total: number;
-    orderNumber: string;
-    items: {
-      name: string;
-      price: number;
-      quantity: number;
-    }[];
-  };
-}
 
 const totalQuantity = (order: any) => {
-  const quantity = order.line_items.data.reduce(
-    (acc, item) => acc + item.quantity,
+  const quantity: number = order.line_items.data.reduce(
+    (acc: number, item: { quantity: number }) => acc + item.quantity,
     0
   );
   return quantity;
