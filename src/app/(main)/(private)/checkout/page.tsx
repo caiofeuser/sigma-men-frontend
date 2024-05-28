@@ -31,11 +31,13 @@ import {
 } from "@chakra-ui/icons";
 import { CartItem } from "@/types";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/authentication";
 
 export default function Checkout() {
   const [isButtonLoading, setIsButtonLoading] = useState(false);
   const [isAlreadyChecked, setIsAlreadyChecked] = useState(false);
   const searchParams = useSearchParams();
+  const { user } = useAuth();
   const pathName = usePathname();
   const {
     cartItems,
@@ -49,8 +51,12 @@ export default function Checkout() {
 
   const handleCheckout = () => {
     setIsButtonLoading(true);
-    console.log(cartItems);
-    postCartCheckout(cartItems).then(
+    const purchaseObject = {
+      cartItems: cartItems,
+      user: user!,
+    };
+
+    postCartCheckout(purchaseObject).then(
       (data) => {
         router.push(data.url);
         setIsAlreadyChecked(true);

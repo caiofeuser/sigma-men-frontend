@@ -9,7 +9,7 @@
 //     }
 //   );
 
-import { CartItem } from "@/types";
+import { CartItem, PurchaseObject } from "@/types";
 import axios from "axios";
 import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
@@ -75,8 +75,9 @@ const useAxios = () => {
     }
   });
 
-  const postCartCheckout = async (cart: CartItem[]) => {
-    const formatedData = cart.map((item) => ({
+  const postCartCheckout = async (purchase: PurchaseObject) => {
+    //@ts-ignore
+    const formatedData = purchase.cartItems.map((item) => ({
       price_id: item.stripeID,
       quantity: item.quantity,
     }));
@@ -178,6 +179,15 @@ const useAxios = () => {
     }
   };
 
+  const getOrders = async () => {
+    try {
+      const response = await axiosPrivateInstance.get("/api/stripe/orders/");
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const getPartnershipStatus = async () => {
     try {
       const response = await axiosPublicInstance.get(
@@ -226,6 +236,7 @@ const useAxios = () => {
     getPartnershipStatus,
     updatePartnershipStatus,
     getContactInfo,
+    getOrders,
   };
 };
 
