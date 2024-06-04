@@ -23,32 +23,116 @@ export interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({
-  loginUser: async () => {},
-  logoutUser: () => {},
-  registerUser: async () => {},
+  loginUser: async () => { },
+  logoutUser: () => { },
+  registerUser: async () => { },
   user: null,
-  setUser: () => {},
-  setAuthToken: () => {},
-  changeUserInfo: async () => {},
+  setUser: () => { },
+  setAuthToken: () => { },
+  changeUserInfo: async () => { },
   authToken: null,
-  verify: async () => {},
-  refresh: async () => {},
-  googleLoginUser: async () => {},
+  verify: async () => { },
+  refresh: async () => { },
+  googleLoginUser: async () => { },
 });
 
 export default AuthContext;
 
 export const AuthWrapper = ({ children }: AuthWrapperType) => {
   const [authToken, setAuthToken] = useState<AuthTokens | null>(null);
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [accessToken, setAccessToken] = useState<String | null>(null);
+  const [refreshToken, setRefreshToken] = useState<String | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("authTokens");
-    if (token) {
-      setAuthToken(JSON.parse(token));
-    }
+    const verifyToken = async (token: string) => {
+      try {
+        const response = await fetch("http://localhost:8000/api/token/verify/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Token verified:', data);
+          return true;
+        } else {
+          console.error('Token verification failed');
+          return false;
+        }
+      } catch (error) {
+        console.error('Error verifying token:', error);
+        return false;
+      }
+    };
+
+    const handleRefreshToken = async (refreshToken: string) => {
+      try {
+        const response = await fetch("http://localhost:8000/api/token/refresh/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh: refreshToken }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const newAccessToken = data.access;
+          const newRefreshToken = data.refresh;
+          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
+          setAccessToken(newAccessToken);
+          setRefreshToken(newRefreshToken);
+          console.log('Token refreshed:', data);
+          return true;
+        } else {
+          console.error('Token refresh failed');
+          return false;
+        }
+      } catch (error) {
+        console.error('Error refreshing token:', error);
+        return false;
+      }
+    };
+
+    const handleTokenVerification = async () => {
+      const access = localStorage.getItem("accessToken");
+      const refresh = localStorage.getItem("refreshToken");
+
+      setAccessToken(access);
+      setRefreshToken(refresh);
+
+      if (access) {
+        const isVerified = await verifyToken(access);
+        if (isVerified) {
+          setIsAuthenticated(true);
+        } else if (refresh) {
+          const isRefreshed = await handleRefreshToken(refresh);
+          if (isRefreshed) {
+            const newAccess = localStorage.getItem("accessToken");
+            if (newAccess) {
+              const isNewTokenVerified = await verifyToken(newAccess);
+              if (isNewTokenVerified) {
+                setIsAuthenticated(true);
+              }
+            }
+          }
+        }
+      } else {
+        console.log('No token found');
+      }
+
+      setLoading(false);
+    };
+
+    handleTokenVerification();
   }, []);
 
   useEffect(() => {
@@ -61,7 +145,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   }, [authToken, loading]);
 
   const loginUser = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:8000/auth_api/login/", {
+    const response = await fetch("http://localhost:8000/api/token/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -126,7 +210,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         refresh: authToken?.refresh,
       });
       const response = await fetch(
-        "http://localhost:8000/auth_api/token/refresh/",
+        "http://localhost:8000/api/token/refresh/",
         {
           method: "POST",
           headers: {
@@ -150,7 +234,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         token: localStorage.getItem("authTokens"),
       });
       const response = await fetch(
-        "http://localhost:8000/auth_api/token/verify/",
+        "http://localhost:8000/api/token/verify/",
         {
           method: "POST",
           headers: {
