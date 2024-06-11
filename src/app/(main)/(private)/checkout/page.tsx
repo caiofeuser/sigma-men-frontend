@@ -51,12 +51,8 @@ export default function Checkout() {
 
   const handleCheckout = () => {
     setIsButtonLoading(true);
-    const purchaseObject = {
-      cartItems: cartItems,
-      user: user!,
-    };
 
-    postCartCheckout(purchaseObject).then(
+    postCartCheckout(cartItems).then(
       (data) => {
         router.push(data.url);
         setIsAlreadyChecked(true);

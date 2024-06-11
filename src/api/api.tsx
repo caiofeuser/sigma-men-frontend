@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
+import { CartItem } from "@/types";
 const BASE_URL = "https://caiofeuser.pythonanywhere.com";
 
 const useAxios = () => {
@@ -59,12 +60,9 @@ const useAxios = () => {
     }
   });
 
-  const postCartCheckout = async (purchase: {
-    price_id: string;
-    quantity: number;
-  }) => {
+  const postCartCheckout = async (cartItems: CartItem[]) => {
     //@ts-ignore
-    const formatedData = purchase.cartItems.map((item) => ({
+    const formatedData = cartItems.map((item) => ({
       price_id: item.stripeID,
       quantity: item.quantity,
     }));
@@ -145,7 +143,6 @@ const useAxios = () => {
       throw error;
     }
   };
-
   const getProductsFilteredOnResult = async (
     survey_name: string,
     track_id: number
