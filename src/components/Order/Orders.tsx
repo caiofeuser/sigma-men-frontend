@@ -68,6 +68,7 @@ export default function Orders() {
       </Flex>
       <Flex p="2rem" pt="0" flexDir="column" rowGap={4}>
         {orders?.map((order: OrderType, index: number) => (
+          // @ts-ignore
           <Order key={index} order={order} />
         ))}
       </Flex>
