@@ -30,11 +30,7 @@ export default function UserInfo(props: { user: User }) {
 
   useEffect(() => {
     if (!isEditing) {
-      changeUserInfo(
-        newUserInfo.first_name,
-        newUserInfo.last_name,
-        newUserInfo?.age || 0
-      );
+      changeUserInfo(newUserInfo.first_name, newUserInfo.last_name);
     }
   }, [isEditing]);
 
