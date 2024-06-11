@@ -8,12 +8,8 @@ import {
   Input,
   FormControl,
   Link,
-  InputGroup,
-  InputRightElement,
-  IconButton,
 } from "@chakra-ui/react";
 import { RiLoginCircleFill } from "react-icons/ri";
-import { Icon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authentication";
 

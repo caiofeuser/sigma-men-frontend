@@ -5,11 +5,6 @@ import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
 const BASE_URL = "https://caiofeuser.pythonanywhere.com";
 
-interface AuthTokens {
-  access: string;
-  refresh: string;
-}
-
 const useAxios = () => {
   const { authToken, setAuthToken, setUser } = useAuth();
   const router = useRouter();

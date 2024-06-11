@@ -23,7 +23,7 @@ export default function Results() {
   const { survey } = useFormsIndex() as FormsIndexContextType;
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [result, setResult] = useState<any>({});
-  const { getSurveyResults, getProductsFilterdOnResult } = useAxios();
+  const { getSurveyResults, getProductsFilteredOnResult } = useAxios();
   const [recomendedProducts, setRecomendedProducts] = useState<any[]>([]);
   const { addItems } = useCartContext();
   const { setIsOpenCart } = useNavbarContext();
@@ -35,7 +35,7 @@ export default function Results() {
     const trackId = lastOption.redirect_to_track;
     getSurveyResults(surveyName, trackId).then((response) => {
       setResult(response.data);
-      getProductsFilterdOnResult(surveyName, trackId).then((response) => {
+      getProductsFilteredOnResult(surveyName, trackId).then((response) => {
         setRecomendedProducts(response.data);
         console.log(response.data);
         setIsLoading(false);
