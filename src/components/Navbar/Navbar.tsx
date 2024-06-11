@@ -1,38 +1,27 @@
 ﻿"use client";
-import {
-  HamburgerIcon,
-  AddIcon,
-  MinusIcon,
-  DeleteIcon,
-  WarningIcon,
-} from "@chakra-ui/icons";
+import { HamburgerIcon, WarningIcon } from "@chakra-ui/icons";
 import { Fragment } from "react";
-import { IoMdAddCircle } from "react-icons/io";
 import {
   Avatar,
   IconButton,
   Text,
   Icon,
-  Flex,
   Menu,
   MenuList,
   MenuGroup,
   MenuDivider,
   MenuItem,
   MenuButton,
-  Box,
-  Button,
   Fade,
 } from "@chakra-ui/react";
 import { SlBasket } from "react-icons/sl";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
-import { RiLogoutBoxLine } from "react-icons/ri";
+import { RiLogoutBoxLine, RiLoginBoxLine } from "react-icons/ri";
 import { MdAccountCircle } from "react-icons/md";
 import MenuBasket from "./MenuCart";
 import { useNavbarContext } from "@/context/navbar";
-// import { useRouter } from "next/router" ;
-
+import { useAuth, AuthContextType } from "@/context/authentication";
 interface NavbarProps {
   drawerRef: React.RefObject<HTMLButtonElement>;
   onOpen: () => void;
@@ -42,6 +31,7 @@ interface NavbarProps {
 export default function Navbar(props: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const { user, logoutUser, authToken } = useAuth() as AuthContextType;
   const { isNavbarVisible } = useNavbarContext();
 
   const menuItems = [
@@ -61,12 +51,21 @@ export default function Navbar(props: NavbarProps) {
           style={{ width: "1.5rem" }}
         />
       ),
-      onClick: () => router.push("/cart"),
+      onClick: () => router.push("/checkout"),
     },
     {
-      title: "Sair",
-      icon: <Icon h="24px" w="24px" color="black.500" as={RiLogoutBoxLine} />,
-      onClick: () => router.push("/login"),
+      title: user ? "Sair" : "Entrar",
+      icon: (
+        <Icon
+          h="24px"
+          w="24px"
+          color="black.500"
+          as={user ? RiLogoutBoxLine : RiLoginBoxLine}
+        />
+      ),
+      onClick: () => {
+        user ? logoutUser() : router.push("/login");
+      },
     },
   ];
 
@@ -86,6 +85,7 @@ export default function Navbar(props: NavbarProps) {
         boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
       }} // Adiciona uma cor de fundo (altere conforme necessário)
       suppressHydrationWarning
+      onClick={() => console.log(authToken)}
     >
       <div
         style={{
@@ -156,10 +156,10 @@ export default function Navbar(props: NavbarProps) {
                 <Avatar
                   cursor="pointer"
                   margin={1}
-                  color="black"
+                  color="white"
+                  bg="brand.500"
                   size="sm"
-                  name="Dan Abrahmov"
-                  src="https://bit.ly/dan-abramov"
+                  name={user ? user?.first_name : "?"}
                 />
               </MenuButton>
               <MenuList>

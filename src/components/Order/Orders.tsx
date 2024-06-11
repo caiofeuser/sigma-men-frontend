@@ -1,5 +1,5 @@
 ﻿"use client";
-import React, { Fragment } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -9,82 +9,67 @@ import {
   Divider,
   Collapse,
   IconButton,
+  Grid,
+  GridItem,
+  Text,
 } from "@chakra-ui/react";
 import { CiShoppingBasket } from "react-icons/ci";
 import Order from "./Order";
 import { useRouter, usePathname } from "next/navigation";
-
-interface OrderType {
-  id: number;
-  date: string;
-  total: number;
-  orderNumber: string;
-  items: {
-    name: string;
-    price: number;
-    quantity: number;
-  }[];
-}
+import useAxios from "@/api/api";
+import { OrderType } from "@/types";
 
 export default function Orders() {
   const router = useRouter();
   const pathname = usePathname();
-  const orders = [
-    {
-      id: 1,
-      orderNumber: "213414512341",
-      date: "2021/09/01",
-      total: 100,
-      items: [
-        {
-          name: "Produto 1",
-          price: 100,
-          quantity: 1,
-        },
-      ],
-    },
-    {
-      id: 2,
-      orderNumber: "516444512341",
-      date: "2021/09/02",
-      total: 200,
-      items: [
-        {
-          name: "Produto 2",
-          price: 200,
-          quantity: 1,
-        },
-      ],
-    },
-  ];
+  const { getOrders } = useAxios();
+  const [orders, setOrders] = useState<OrderType[]>([]);
+
+  useEffect(() => {
+    getOrders().then(
+      (response) => {
+        setOrders(response.data);
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }, []);
   return (
     <Box mt="2rem" width="100%" p="2rem">
       <Flex alignItems="center" gap="2rem">
-        <Icon color="black.500" w="4rem" h="4rem" as={CiShoppingBasket} />
-        <Heading>Meus pedidos</Heading>
+        <Icon color="black.500" w="3rem" h="3rem" as={CiShoppingBasket} />
+        <Heading fontSize="2xl" as="b">
+          Meus pedidos
+        </Heading>
       </Flex>
       <Flex
         borderRadius="2rem"
         p="2rem"
-        bg="brand.50"
         flexDir="column"
         rowGap={4}
-        mt="2rem"
+        mt="1rem"
+        mr="2rem"
       >
-        {orders.map((order: OrderType) => (
-          <Order key={order.id} order={order} />
+        <Grid templateColumns="repeat(4, 1fr)" justifyItems="stretch">
+          <GridItem p="1rem" pb="0">
+            <Text as="b">Número do pedido</Text>
+          </GridItem>
+          <GridItem p="1rem" pb="0">
+            <Text as="b">Data</Text>
+          </GridItem>
+          <GridItem p="1rem" pb="0">
+            <Text as="b">Total</Text>
+          </GridItem>
+          <GridItem p="1rem" pb="0">
+            <Text as="b">Status</Text>
+          </GridItem>
+        </Grid>
+      </Flex>
+      <Flex p="2rem" pt="0" flexDir="column" rowGap={4}>
+        {orders?.map((order: OrderType, index: number) => (
+          <Order key={index} order={order} />
         ))}
-        {pathname !== "/cart" && (
-          <Box textAlign="right" mt="1rem">
-            <Button
-              colorScheme="brand"
-              rounded="full"
-              onClick={() => router.push("/cart")}
-            >
-              Ver mais
-            </Button>
-          </Box>
-        )}
       </Flex>
     </Box>
   );

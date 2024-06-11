@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   Box,
   Flex,
@@ -11,24 +11,39 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
+  useEditable,
 } from "@chakra-ui/react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { Icon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
+import AuthContext from "@/context/authentication";
 
 export default function Login() {
   const [show, setShow] = useState(false);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const router = useRouter();
+  //@ts-ignore
+  const { loginUser } = useContext(AuthContext);
 
   const handleSubmit = () => {
     console.log({
       email,
       password,
     });
-    router.push("/");
+    loginUser(email, password);
+    // router.push("/");
   };
+
+  const googleLogin = () => {
+    const clientID =
+      "102706128447-umr46127uau64t7sk7h7knvrtu77snqv.apps.googleusercontent.com";
+    const callBackURI = "http://localhost:3000/";
+    window.location.replace(
+      `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${callBackURI}&prompt=consent&response_type=code&client_id=${clientID}&scope=openid%20email%20profile&access_type=offline`
+    );
+  };
+
   return (
     <Flex justifyContent="center">
       <Box bg="white" padding="4rem" minW="35rem" borderRadius="2rem" mt="2rem">
@@ -38,6 +53,29 @@ export default function Login() {
           </Heading>
         </Box>
         <Box>
+          <Box>
+            <Button
+              onClick={() => googleLogin()}
+              colorScheme="black"
+              rounded="full"
+              w="100%"
+              fontWeight="600"
+              fontSize="1.25rem"
+              h="3rem"
+              mb="1rem"
+            >
+              Entrar com Google
+              <Icon
+                as={RiLoginCircleFill}
+                size="1.25rem"
+                color="var(--chakra-colors-brand-500)"
+                style={{
+                  position: "absolute",
+                  right: "1rem",
+                }}
+              />
+            </Button>
+          </Box>
           <FormControl>
             <Input
               mb="2rem"
