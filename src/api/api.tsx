@@ -1,20 +1,10 @@
-﻿// const authTokenWithRefresh = JSON.parse(localStorage.getItem("authTokens"));
-// console.log(authTokenWithRefresh);
-
-// try {
-//   const response = await axios.post(
-//     "http://localhost:8000/auth_api/token/refresh/",
-//     {
-//       refresh: authTokenWithRefresh.refresh,
-//     }
-//   );
-
-import { CartItem, PurchaseObject } from "@/types";
-import axios from "axios";
+﻿import axios from "axios";
 import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
+import { PurchaseObject } from "@/types";
+const BASE_URL = "https://caiofeuser.pythonanywhere.com";
 
 interface AuthTokens {
   access: string;
@@ -26,14 +16,14 @@ const useAxios = () => {
   const router = useRouter();
 
   const axiosPublicInstance = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: `${BASE_URL}`,
     headers: {
       "Content-Type": "application/json",
     },
   });
 
   const axiosPrivateInstance = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: `${BASE_URL}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -56,12 +46,9 @@ const useAxios = () => {
     console.log(authTokenWithRefresh);
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/auth_api/token/refresh/",
-        {
-          refresh: authTokenWithRefresh.refresh,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/auth_api/token/refresh/`, {
+        refresh: authTokenWithRefresh.refresh,
+      });
 
       localStorage.setItem("authTokens", JSON.stringify(response.data));
       setAuthToken(response.data);
@@ -75,7 +62,10 @@ const useAxios = () => {
     }
   });
 
-  const postCartCheckout = async (purchase: PurchaseObject) => {
+  const postCartCheckout = async (purchase: {
+    price_id: string;
+    quantity: number;
+  }) => {
     //@ts-ignore
     const formatedData = purchase.cartItems.map((item) => ({
       price_id: item.stripeID,

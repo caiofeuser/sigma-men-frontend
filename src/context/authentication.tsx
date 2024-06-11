@@ -4,6 +4,8 @@ import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { AuthTokens, User } from "@/types";
 
+const BASE_URL = "https://caiofeuser.pythonanywhere.com";
+
 interface AuthWrapperType {
   children: React.ReactNode;
 }
@@ -21,15 +23,15 @@ export interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType>({
-  loginUser: async () => { },
-  logoutUser: () => { },
-  registerUser: async () => { },
+  loginUser: async () => {},
+  logoutUser: () => {},
+  registerUser: async () => {},
   user: null,
-  setUser: () => { },
-  setAuthToken: () => { },
-  changeUserInfo: async () => { },
+  setUser: () => {},
+  setAuthToken: () => {},
+  changeUserInfo: async () => {},
   authToken: null,
-  googleLoginUser: async () => { },
+  googleLoginUser: async () => {},
 });
 
 export default AuthContext;
@@ -53,7 +55,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   useEffect(() => {
     const verifyToken = async (token: string) => {
       try {
-        const response = await fetch("http://localhost:8000/api/token/verify/", {
+        const response = await fetch(`${BASE_URL}/api/token/verify/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -63,21 +65,21 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('Token verified:', data);
+          console.log("Token verified:", data);
           return true;
         } else {
-          console.error('Token verification failed');
+          console.error("Token verification failed");
           return false;
         }
       } catch (error) {
-        console.error('Error verifying token:', error);
+        console.error("Error verifying token:", error);
         return false;
       }
     };
 
     const handleRefreshToken = async (refreshToken: string) => {
       try {
-        const response = await fetch("http://localhost:8000/api/token/refresh/", {
+        const response = await fetch(`${BASE_URL}/api/token/refresh/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -93,14 +95,14 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
           localStorage.setItem("refreshToken", newRefreshToken);
           setAccessToken(newAccessToken);
           setRefreshToken(newRefreshToken);
-          console.log('Token refreshed:', data);
+          console.log("Token refreshed:", data);
           return true;
         } else {
-          console.error('Token refresh failed');
+          console.error("Token refresh failed");
           return false;
         }
       } catch (error) {
-        console.error('Error refreshing token:', error);
+        console.error("Error refreshing token:", error);
         return false;
       }
     };
@@ -130,23 +132,31 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
             console.log("refresh worked", loading, isAuthenticated);
             const newAccess = localStorage.getItem("accessToken");
             if (newAccess) {
-              console.log("new access token generated", loading, isAuthenticated);
+              console.log(
+                "new access token generated",
+                loading,
+                isAuthenticated
+              );
               const isNewTokenVerified = await verifyToken(newAccess);
               if (isNewTokenVerified) {
-                console.log("new access token verified", loading, isAuthenticated);
+                console.log(
+                  "new access token verified",
+                  loading,
+                  isAuthenticated
+                );
                 setIsAuthenticated(true);
               }
             }
           } else {
-            console.log('Invalid refresh token.');
+            console.log("Invalid refresh token.");
             router.push("/login");
           }
         } else {
-          console.log('Access token invalid and refresh token non existant.');
+          console.log("Access token invalid and refresh token non existant.");
           router.push("/login");
         }
       } else {
-        console.log('No token found');
+        console.log("No token found");
         router.push("/login");
       }
 
@@ -157,7 +167,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   }, []);
 
   const loginUser = async (email: string, password: string) => {
-    const response = await fetch("http://localhost:8000/api/token/", {
+    const response = await fetch(`${BASE_URL}/api/token/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -176,7 +186,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         email: decodedToken.email,
         first_name: decodedToken.first_name,
         last_name: decodedToken.last_name,
-      }
+      };
       setUser(tempUser);
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
@@ -197,16 +207,13 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       password1,
       password2,
     });
-    const response = await fetch(
-      "http://localhost:8000/auth_api/registration/",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: body,
-      }
-    );
+    const response = await fetch(`${BASE_URL}/auth_api/registration/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: body,
+    });
 
     const data = await response.json();
 
@@ -230,7 +237,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     last_name: string,
     age: number
   ) => {
-    const response = await fetch("http://localhost:8000/auth_api/user/", {
+    const response = await fetch(`${BASE_URL}/auth_api/user/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -248,7 +255,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const getUserInfo = async () => {
-    const response = await fetch("http://localhost:8000/auth_api/user/", {
+    const response = await fetch(`${BASE_URL}/auth_api/user/`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -265,7 +272,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const googleLoginUser = async (code: string) => {
-    const response = await fetch("http://localhost:8000/auth_api/google/", {
+    const response = await fetch(`${BASE_URL}/auth_api/google/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -284,7 +291,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         email: decodedToken.email,
         first_name: decodedToken.first_name,
         last_name: decodedToken.last_name,
-      }
+      };
       setUser(tempUser);
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
