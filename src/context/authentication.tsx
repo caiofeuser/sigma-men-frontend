@@ -17,7 +17,7 @@ export interface AuthContextType {
   user: User | null;
   setUser: (user: User) => void;
   setAuthToken: (token: AuthTokens) => void;
-  changeUserInfo: (first_name: string, last_name: string, age: number) => void;
+  changeUserInfo: (first_name: string, last_name: string) => void;
   authToken: AuthTokens | null;
   googleLoginUser: (code: string) => void;
 }
@@ -232,11 +232,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     router.push("/");
   };
 
-  const changeUserInfo = async (
-    first_name: string,
-    last_name: string,
-    age: number
-  ) => {
+  const changeUserInfo = async (first_name: string, last_name: string) => {
     const response = await fetch(`${BASE_URL}/auth_api/user/`, {
       method: "PUT",
       headers: {
