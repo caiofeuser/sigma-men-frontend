@@ -3,7 +3,6 @@ import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
-import { PurchaseObject } from "@/types";
 const BASE_URL = "https://caiofeuser.pythonanywhere.com";
 
 interface AuthTokens {
