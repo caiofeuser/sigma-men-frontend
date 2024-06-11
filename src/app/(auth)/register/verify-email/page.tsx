@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useContext, useEffect } from "react";
+import { Suspense } from "react";
 import { Box, Flex, Text, Heading } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/authentication";
@@ -24,35 +24,43 @@ export default function VerifyEmail() {
   };
 
   return (
-    <Flex justifyContent="center">
-      <Box bg="white" padding="4rem" minW="35rem" borderRadius="2rem" mt="2rem">
-        <Flex
-          flexDir="column"
-          justifyContent="center"
-          alignItems="center"
-          gap={5}
+    <Suspense fallback={<div>Carregando...</div>}>
+      <Flex justifyContent="center">
+        <Box
+          bg="white"
+          padding="4rem"
+          minW="35rem"
+          borderRadius="2rem"
+          mt="2rem"
         >
-          <Heading mb="2rem" textAlign="center" fontSize="3xl">
-            Enviamos uma e-mail para você!
-          </Heading>
           <Flex
-            gap={1}
             flexDir="column"
-            alignItems="center"
             justifyContent="center"
-            mb={4}
+            alignItems="center"
+            gap={5}
           >
-            <Text fontSize="md">
-              Clique no link que foi enviado para confirmar seu e-mail.
-            </Text>
-            <Text fontSize="sm" color="black.100">
-              Caso demore mais do que o esperado, entre em contato com nosso
-              suporte.
-            </Text>
+            <Heading mb="2rem" textAlign="center" fontSize="3xl">
+              Enviamos uma e-mail para você!
+            </Heading>
+            <Flex
+              gap={1}
+              flexDir="column"
+              alignItems="center"
+              justifyContent="center"
+              mb={4}
+            >
+              <Text fontSize="md">
+                Clique no link que foi enviado para confirmar seu e-mail.
+              </Text>
+              <Text fontSize="sm" color="black.100">
+                Caso demore mais do que o esperado, entre em contato com nosso
+                suporte.
+              </Text>
+            </Flex>
+            <CheckIcon />
           </Flex>
-          <CheckIcon />
-        </Flex>
-      </Box>
-    </Flex>
+        </Box>
+      </Flex>
+    </Suspense>
   );
 }
