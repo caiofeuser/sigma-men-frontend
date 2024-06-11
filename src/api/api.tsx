@@ -35,13 +35,16 @@ const useAxios = () => {
     }
 
     const isExpired =
+      //@ts-ignore
       dayjs.unix(jwtDecode(authToken.access).exp).diff(dayjs()) < 1;
     if (!isExpired) {
       req.headers.Authorization = `Bearer ${authToken.access}`;
       return req;
     }
 
-    const authTokenWithRefresh = JSON.parse(localStorage.getItem("authTokens"));
+    const authTokenWithRefresh = JSON.parse(
+      localStorage.getItem("authTokens") ?? "{}"
+    );
     console.log(authTokenWithRefresh);
 
     try {
