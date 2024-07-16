@@ -223,6 +223,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ email, password }),
     });
 
@@ -262,6 +263,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: body,
     });
 
@@ -278,6 +280,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify({ uid, token }),
     });
 
@@ -298,6 +301,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
     });
   };
 
@@ -320,55 +324,35 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     }
   };
 
-  axios.defaults.withCredentials = true;
   const getUrlGoogle = async () => {
-    const response = await fetch(
-      `${BASE_URL}/api/o/google-oauth2/?redirect_uri=${BASE_FRONTEND_URL}/auth/google`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const url = `${BASE_URL}/api/o/google-oauth2/?redirect_uri=${BASE_FRONTEND_URL}/auth/google`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+      credentials: "include",
+    });
 
     const data = await response.json();
     return data;
   };
 
-  axios.defaults.withCredentials = true;
-
   const googleLoginUser = async (code: string, state: string) => {
-    if (state && code && !localStorage.getItem("access")) {
-      const config = {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        withCredentials: true,
-      };
+    const url = `${BASE_URL}/api/o/google-oauth2/?state=${encodeURIComponent(
+      state
+    )}&code=${encodeURIComponent(code)}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      credentials: "include", // Ensure cookies are sent with the request
+    });
 
-      const details = {
-        state: state,
-        code: code,
-      };
-
-      const formBody = Object.keys(details)
-        .map(
-          (key) =>
-            encodeURIComponent(key) + "=" + encodeURIComponent(details[key])
-        )
-        .join("&");
-
-      try {
-        const res = await axios.post(
-          `${BASE_URL}/api/o/google-oauth2/?${formBody}`,
-          config
-        );
-        console.log(res);
-      } catch (err) {
-        console.log(err);
-      }
-    }
+    const data = await response.json();
+    console.log(data);
   };
 
   const contextData: AuthContextType = {

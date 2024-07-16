@@ -43,14 +43,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const [isAlertVisible, setIsAlertVisible] = useState<boolean>(false);
   // const code = params.get("code") || "";
-  const { googleLoginUser, accessToken, user } = useAuth();
-
-  // useEffect(() => {
-  //   if (code) {
-  //     localStorage.setItem("googleCode", code);
-  //     router.push("/google");
-  //   }
-  // }, [code, googleLoginUser]);
+  const { user } = useAuth();
 
   const logout = () => {
     localStorage.removeItem("aceessToken");

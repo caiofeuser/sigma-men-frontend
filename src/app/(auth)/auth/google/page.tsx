@@ -22,8 +22,6 @@ export default function Google() {
     const code = searchParams.get("code");
     const state = searchParams.get("state");
 
-    window.sessionStorage.setItem("state", JSON.stringify(state));
-
     if (code && state) {
       googleLoginUser(code, state);
     }
