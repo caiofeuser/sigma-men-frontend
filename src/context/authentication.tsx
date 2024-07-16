@@ -3,8 +3,11 @@ import { useState, createContext, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { AuthTokens, User } from "@/types";
+import axios from "axios";
+import { stat } from "fs";
 
-const BASE_URL = "https://caiofeuser.pythonanywhere.com";
+const BASE_URL = "http://127.0.0.1:8000";
+const BASE_FRONTEND_URL = "http://127.0.0.1:3000";
 
 interface AuthWrapperType {
   children: React.ReactNode;
@@ -13,33 +16,53 @@ interface AuthWrapperType {
 export interface AuthContextType {
   loginUser: (email: string, password: string) => void;
   logoutUser: () => void;
-  registerUser: (email: string, password1: string, password2: string) => void;
+  registerUser: (
+    first_name: string,
+    last_name: string,
+    email: string,
+    password1: string,
+    password2: string
+  ) => void;
+  activation: (uid: string, token: string) => void;
+  getUserInfo: (accessToken: string) => void;
   user: User | null;
   setUser: (user: User) => void;
-  setAuthToken: (token: AuthTokens) => void;
+  accessToken: string | null;
+  setAccessToken: (token: string) => void;
+  refreshToken: string | null;
+  setRefreshToken: (token: string) => void;
+  // setAuthToken: (token: AuthTokens) => void;
+  getUrlGoogle: () => void;
   changeUserInfo: (first_name: string, last_name: string) => void;
-  authToken: AuthTokens | null;
-  googleLoginUser: (code: string) => void;
+  // authToken: AuthTokens | null;
+  googleLoginUser: (code: string, state: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   loginUser: async () => {},
   logoutUser: () => {},
   registerUser: async () => {},
+  activation: async () => {},
+  getUserInfo: async () => {},
   user: null,
   setUser: () => {},
-  setAuthToken: () => {},
+  // setAuthToken: () => {},
+  accessToken: null,
+  setAccessToken: () => {},
+  getUrlGoogle: async () => {},
+  refreshToken: null,
+  setRefreshToken: () => {},
   changeUserInfo: async () => {},
-  authToken: null,
+  // authToken: null,
   googleLoginUser: async () => {},
 });
 
 export default AuthContext;
 
 export const AuthWrapper = ({ children }: AuthWrapperType) => {
-  const [authToken, setAuthToken] = useState<AuthTokens | null>(null);
-  const [accessToken, setAccessToken] = useState<String | null>(null);
-  const [refreshToken, setRefreshToken] = useState<String | null>(null);
+  // const [authToken, setAuthToken] = useState<AuthTokens | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -55,7 +78,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   useEffect(() => {
     const verifyToken = async (token: string) => {
       try {
-        const response = await fetch(`${BASE_URL}/api/token/verify/`, {
+        const response = await fetch(`${BASE_URL}/api/jwt/verify/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -79,7 +102,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
 
     const handleRefreshToken = async (refreshToken: string) => {
       try {
-        const response = await fetch(`${BASE_URL}/api/token/refresh/`, {
+        const response = await fetch(`${BASE_URL}/api/jwt/refresh/`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -119,45 +142,55 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         if (isVerified) {
           setIsAuthenticated(true);
           const decodedToken = jwtDecode<DecodedToken>(access);
-          setUser({
-            pk: decodedToken.pk,
-            email: decodedToken.email,
-            first_name: decodedToken.first_name,
-            last_name: decodedToken.last_name,
-          });
+          getUserInfo(access);
         } else if (refresh) {
           console.log("Access token expired, trying to refresh");
           const isRefreshed = await handleRefreshToken(refresh);
           if (isRefreshed) {
-            console.log("refresh worked", loading, isAuthenticated);
             const newAccess = localStorage.getItem("accessToken");
             if (newAccess) {
-              console.log(
-                "new access token generated",
-                loading,
-                isAuthenticated
-              );
               const isNewTokenVerified = await verifyToken(newAccess);
               if (isNewTokenVerified) {
-                console.log(
-                  "new access token verified",
-                  loading,
-                  isAuthenticated
-                );
                 setIsAuthenticated(true);
+                const decodedToken = jwtDecode<DecodedToken>(newAccess);
+                setUser({
+                  pk: decodedToken.pk,
+                  email: decodedToken.email,
+                  first_name: decodedToken.first_name,
+                  last_name: decodedToken.last_name,
+                });
+              } else {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                setAccessToken(null);
+                setRefreshToken(null);
+                setIsAuthenticated(false);
+                // router.push("/login");
               }
             }
           } else {
-            console.log("Invalid refresh token.");
-            router.push("/login");
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            setAccessToken(null);
+            setRefreshToken(null);
+            setIsAuthenticated(false);
+            // router.push("/login");
           }
         } else {
-          console.log("Access token invalid and refresh token non existant.");
-          router.push("/login");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          setAccessToken(null);
+          setRefreshToken(null);
+          setIsAuthenticated(false);
+          // router.push("/login");
         }
       } else {
-        console.log("No token found");
-        router.push("/login");
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        setAccessToken(null);
+        setRefreshToken(null);
+        setIsAuthenticated(false);
+        // router.push("/login");
       }
 
       setLoading(false);
@@ -166,8 +199,26 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     handleTokenVerification();
   }, []);
 
+  const getUserInfo = async (accessToken: string) => {
+    const response = await fetch(`${BASE_URL}/api/users/me/`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const data = await response.json();
+    if (response.status === 200) {
+      setUser(data);
+      localStorage.setItem("user", JSON.stringify(data));
+    } else {
+      console.error("Error getting user info");
+    }
+  };
+
   const loginUser = async (email: string, password: string) => {
-    const response = await fetch(`${BASE_URL}/api/token/`, {
+    const response = await fetch(`${BASE_URL}/api/jwt/create/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -178,19 +229,14 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     const data = await response.json();
 
     if (response.status === 200) {
+      console.log(data);
       setAccessToken(data.access);
       setRefreshToken(data.refresh);
       const decodedToken = jwtDecode<DecodedToken>(data.access);
-      const tempUser = {
-        pk: decodedToken.pk,
-        email: decodedToken.email,
-        first_name: decodedToken.first_name,
-        last_name: decodedToken.last_name,
-      };
-      setUser(tempUser);
+      getUserInfo(data.access);
       localStorage.setItem("accessToken", data.access);
       localStorage.setItem("refreshToken", data.refresh);
-      localStorage.setItem("user", JSON.stringify(tempUser));
+      // localStorage.setItem("user", JSON.stringify(tempUser));
       router.push("/");
     } else {
       alert("Usuário ou senha inválidos");
@@ -198,16 +244,20 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const registerUser = async (
+    first_name: string,
+    last_name: string,
     email: string,
-    password1: string,
-    password2: string
+    password: string,
+    re_password: string
   ) => {
     const body = JSON.stringify({
+      first_name,
+      last_name,
       email,
-      password1,
-      password2,
+      password,
+      re_password,
     });
-    const response = await fetch(`${BASE_URL}/auth_api/registration/`, {
+    const response = await fetch(`${BASE_URL}/api/users/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -222,22 +272,42 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     }
   };
 
-  const logoutUser = () => {
-    setAuthToken(null);
+  const activation = async (uid: string, token: string) => {
+    const response = await fetch(`${BASE_URL}/api/users/activation/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uid, token }),
+    });
+
+    return response;
+  };
+
+  const logoutUser = async () => {
+    setAccessToken(null);
+    setRefreshToken(null);
     setUser(null);
     localStorage.removeItem("authTokens");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     router.push("/");
+    const response = await fetch(`${BASE_URL}/api/logout/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
   };
 
   const changeUserInfo = async (first_name: string, last_name: string) => {
-    const response = await fetch(`${BASE_URL}/auth_api/user/`, {
+    console.log(accessToken);
+    const response = await fetch(`${BASE_URL}/api/users/me/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken?.access}`,
+        Authorization: `Bearer ${accessToken}`,
       },
       body: JSON.stringify({ first_name, last_name }),
     });
@@ -250,51 +320,54 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     }
   };
 
-  const getUserInfo = async () => {
-    const response = await fetch(`${BASE_URL}/auth_api/user/`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken?.access}`,
-      },
-    });
+  axios.defaults.withCredentials = true;
+  const getUrlGoogle = async () => {
+    const response = await fetch(
+      `${BASE_URL}/api/o/google-oauth2/?redirect_uri=${BASE_FRONTEND_URL}/auth/google`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
     const data = await response.json();
-    if (response.status === 200) {
-      setUser(data);
-      localStorage.setItem("user", JSON.stringify(data));
-    } else {
-    }
+    return data;
   };
 
-  const googleLoginUser = async (code: string) => {
-    const response = await fetch(`${BASE_URL}/auth_api/google/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code }),
-    });
+  axios.defaults.withCredentials = true;
 
-    const data = await response.json();
-
-    if (response.status === 200) {
-      setAccessToken(data.access);
-      setRefreshToken(data.refresh);
-      const decodedToken = jwtDecode<DecodedToken>(data.access);
-      const tempUser = {
-        pk: decodedToken.pk,
-        email: decodedToken.email,
-        first_name: decodedToken.first_name,
-        last_name: decodedToken.last_name,
+  const googleLoginUser = async (code: string, state: string) => {
+    if (state && code && !localStorage.getItem("access")) {
+      const config = {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        withCredentials: true,
       };
-      setUser(tempUser);
-      localStorage.setItem("accessToken", data.access);
-      localStorage.setItem("refreshToken", data.refresh);
-      localStorage.setItem("user", JSON.stringify(tempUser));
-      router.push("/");
-    } else {
-      alert("Algo deu errado");
+
+      const details = {
+        state: state,
+        code: code,
+      };
+
+      const formBody = Object.keys(details)
+        .map(
+          (key) =>
+            encodeURIComponent(key) + "=" + encodeURIComponent(details[key])
+        )
+        .join("&");
+
+      try {
+        const res = await axios.post(
+          `${BASE_URL}/api/o/google-oauth2/?${formBody}`,
+          config
+        );
+        console.log(res);
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -302,10 +375,17 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     loginUser,
     logoutUser,
     registerUser,
+    activation,
+    getUserInfo,
     user,
     setUser,
-    authToken: authToken as AuthTokens,
-    setAuthToken,
+    accessToken,
+    setAccessToken,
+    refreshToken,
+    setRefreshToken,
+    getUrlGoogle,
+    // authToken: authToken as AuthTokens,
+    // setAuthToken,
     changeUserInfo,
     googleLoginUser,
   };

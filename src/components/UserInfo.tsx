@@ -29,13 +29,19 @@ export default function UserInfo(props: { user: User }) {
   };
 
   useEffect(() => {
-    if (!isEditing) {
+    if (isEditing) {
       changeUserInfo(newUserInfo.first_name, newUserInfo.last_name);
     }
   }, [isEditing]);
 
   return (
-    <Box w="80%" mt="2rem" p="2rem" textAlign="center">
+    <Box
+      onClick={() => console.log()}
+      w="80%"
+      mt="2rem"
+      p="2rem"
+      textAlign="center"
+    >
       <Flex alignItems="center" gap="2rem">
         <Icon color="black.500" w="3rem" p="0.5rem" h="3rem" as={FaUser} />
         <Heading fontSize="2xl" as="b">
@@ -67,7 +73,7 @@ export default function UserInfo(props: { user: User }) {
             />
           ) : (
             <Text px="0.5rem" w="calc(100% - 120px)" textAlign="left">
-              {user.first_name}
+              {user?.first_name}
             </Text>
           )}
         </Flex>
@@ -85,7 +91,7 @@ export default function UserInfo(props: { user: User }) {
             />
           ) : (
             <Text px="0.5rem" w="calc(100% - 120px)" textAlign="left">
-              {user.last_name}
+              {user?.last_name}
             </Text>
           )}
         </Flex>
@@ -95,7 +101,7 @@ export default function UserInfo(props: { user: User }) {
             Email:
           </Text>
           <Text px="0.5rem" w="calc(100% - 120px)" textAlign="left">
-            {user.email}
+            {user?.email}
           </Text>
         </Flex>
         <Box textAlign="right">

@@ -51,7 +51,7 @@ export default function Checkout() {
   const router = useRouter();
 
   const handleCheckout = () => {
-    setIsButtonLoading(true);
+    // setIsButtonLoading(true);
 
     postCartCheckout(cartItems).then(
       (data) => {
@@ -60,7 +60,7 @@ export default function Checkout() {
       },
       (error) => {
         console.error(error);
-        alert("Erro ao finalizar a compra");
+        // alert("Erro ao finalizar a compra");
       }
     );
   };

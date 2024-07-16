@@ -42,18 +42,19 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isNavbarVisible, setIsNavbarVisible] = useState(true);
   const [isAlertVisible, setIsAlertVisible] = useState<boolean>(false);
-  const code = params.get("code") || "";
-  const { googleLoginUser, authToken, user } = useAuth();
+  // const code = params.get("code") || "";
+  const { googleLoginUser, accessToken, user } = useAuth();
 
-  useEffect(() => {
-    if (code) {
-      localStorage.setItem("googleCode", code);
-      router.push("/google");
-    }
-  }, [code, googleLoginUser]);
+  // useEffect(() => {
+  //   if (code) {
+  //     localStorage.setItem("googleCode", code);
+  //     router.push("/google");
+  //   }
+  // }, [code, googleLoginUser]);
 
   const logout = () => {
-    localStorage.removeItem("authTokens");
+    localStorage.removeItem("aceessToken");
+    localStorage.removeItem("refreshToken");
     router.push("/");
   };
 
@@ -70,33 +71,33 @@ export default function RootLayout({ children }: RootLayoutProps) {
     { name: "Contatos" },
   ];
 
-  const verifyEmail = async (token: string) => {
-    if (authToken) {
-      const response = await fetch(
-        `http://localhost:8000/auth_api/user/is-verified/`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const data = await response.json();
-      if (response.status === 400) {
-        setIsAlertVisible(true);
-        setTimeout(() => {
-          setIsAlertVisible(false);
-        }, 5000);
-      }
-    }
-  };
+  // const verifyEmail = async (token: string) => {
+  //   if (accessToken) {
+  //     const response = await fetch(
+  //       `http://localhost:8000/auth_api/user/is-verified/`,
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+  //     const data = await response.json();
+  //     if (response.status === 400) {
+  //       setIsAlertVisible(true);
+  //       setTimeout(() => {
+  //         setIsAlertVisible(false);
+  //       }, 5000);
+  //     }
+  //   }
+  // };
 
-  useEffect(() => {
-    if (authToken) {
-      verifyEmail(authToken.access);
-    }
-  }, [authToken]);
+  // useEffect(() => {
+  //   if (authToken) {
+  //     verifyEmail(authToken.access);
+  //   }
+  // }, [authToken]);
 
   return (
     <html suppressHydrationWarning={true}>
@@ -186,7 +187,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
                                     logout();
                                     onClose();
                                   } else {
-                                    router.push("/login");
+                                    // router.push("/login");
                                     onClose();
                                   }
                                 }}

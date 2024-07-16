@@ -3,7 +3,7 @@ import { Box, Flex, Text, Heading, Button } from "@chakra-ui/react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 // const key = params.get("key") || "";
-import "../success.css";
+import "./success.css";
 
 export default function VerifyEmail() {
   const params = useSearchParams();

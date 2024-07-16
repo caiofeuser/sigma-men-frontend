@@ -4,10 +4,17 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
 import { CartItem } from "@/types";
-const BASE_URL = "https://caiofeuser.pythonanywhere.com";
+const BASE_URL = "http://127.0.0.1:8000";
 
 const useAxios = () => {
-  const { authToken, setAuthToken, setUser } = useAuth();
+  const {
+    accessToken,
+    setAccessToken,
+    refreshToken,
+    setRefreshToken,
+    setUser,
+    getUserInfo,
+  } = useAuth();
   const router = useRouter();
 
   const axiosPublicInstance = axios.create({
@@ -25,18 +32,19 @@ const useAxios = () => {
   });
 
   axiosPrivateInstance.interceptors.request.use(async (req) => {
-    if (!authToken) {
-      router.push("/login"); // Redireciona para a página de login se não houver token
+    if (!accessToken) {
+      // router.push("/login"); // Redireciona para a página de login se não houver token
       throw new axios.Cancel("Unauthorized");
     }
+    req.headers.Authorization = `Bearer ${accessToken}`;
 
-    const isExpired =
-      //@ts-ignore
-      dayjs.unix(jwtDecode(authToken.access).exp).diff(dayjs()) < 1;
+    //@ts-ignore
+    const isExpired = dayjs.unix(jwtDecode(accessToken).exp).diff(dayjs()) < 1;
     if (!isExpired) {
-      req.headers.Authorization = `Bearer ${authToken.access}`;
       return req;
     }
+
+    console.log(jwtDecode(accessToken));
 
     const authTokenWithRefresh = JSON.parse(
       localStorage.getItem("authTokens") ?? "{}"
@@ -44,18 +52,23 @@ const useAxios = () => {
     console.log(authTokenWithRefresh);
 
     try {
-      const response = await axios.post(`${BASE_URL}/auth_api/token/refresh/`, {
+      const response = await axios.post(`${BASE_URL}/api/jwt/refresh/`, {
         refresh: authTokenWithRefresh.refresh,
       });
 
-      localStorage.setItem("authTokens", JSON.stringify(response.data));
-      setAuthToken(response.data);
-      setUser(jwtDecode(response.data.access));
+      localStorage.setItem("accessToken", JSON.stringify(response.data.access));
+      localStorage.setItem(
+        "refreshToken",
+        JSON.stringify(response.data.refresh)
+      );
+      setAccessToken(response.data.access);
+      setRefreshToken(response.data.refresh);
+      getUserInfo(accessToken);
 
       req.headers.Authorization = `Bearer ${response.data.access}`;
       return req;
     } catch (error) {
-      router.push("/login"); // Redireciona para a página de login se a renovação do token falhar
+      // router.push("/login"); // Redireciona para a página de login se a renovação do token falhar
       throw new axios.Cancel("Unauthorized");
     }
   });

@@ -24,7 +24,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const router = useRouter();
   //@ts-ignore
-  const { loginUser } = useContext(AuthContext);
+  const { loginUser, getUrlGoogle } = useContext(AuthContext);
 
   const handleSubmit = () => {
     console.log({
@@ -32,16 +32,16 @@ export default function Login() {
       password,
     });
     loginUser(email, password);
-    // router.push("/");
+    router.push("/");
   };
 
-  const googleLogin = () => {
-    const clientID =
-      "102706128447-umr46127uau64t7sk7h7knvrtu77snqv.apps.googleusercontent.com";
-    const callBackURI = "http://localhost:3000/";
-    window.location.replace(
-      `https://accounts.google.com/o/oauth2/v2/auth?redirect_uri=${callBackURI}&prompt=consent&response_type=code&client_id=${clientID}&scope=openid%20email%20profile&access_type=offline`
-    );
+  const handleGoogleLogin = () => {
+    //@ts-ignore
+    getUrlGoogle().then((data: { authorization_url: string }) => {
+      const { authorization_url } = data;
+      window.location.href = authorization_url;
+      console.log(data);
+    });
   };
 
   return (
@@ -62,7 +62,7 @@ export default function Login() {
           <Box>
             <Box>
               <Button
-                onClick={() => googleLogin()}
+                onClick={() => handleGoogleLogin()}
                 colorScheme="black"
                 rounded="full"
                 w="100%"

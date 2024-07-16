@@ -18,9 +18,11 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/authentication";
 
 export default function Register() {
+  const [name, setName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [password1, setPassword1] = useState<string>("");
-  const [password2, setPassword2] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [rePassword, setRePassword] = useState<string>("");
   const [showPassword1, setShowPassword1] = useState<Boolean>(false);
   const [showPassword2, setShowPassword2] = useState<Boolean>(false);
   const { registerUser } = useAuth();
@@ -48,6 +50,32 @@ export default function Register() {
                 mb="2rem"
                 focusBorderColor="brand.500"
                 colorScheme="brand"
+                type="text"
+                id="first_name"
+                placeholder="Nome"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                h="3rem"
+              />
+            </FormControl>
+            <FormControl>
+              <Input
+                mb="2rem"
+                focusBorderColor="brand.500"
+                colorScheme="brand"
+                type="text"
+                id="last_name"
+                placeholder="Sobrenome"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                h="3rem"
+              />
+            </FormControl>
+            <FormControl>
+              <Input
+                mb="2rem"
+                focusBorderColor="brand.500"
+                colorScheme="brand"
                 type="email"
                 id="email"
                 placeholder="Email"
@@ -64,8 +92,8 @@ export default function Register() {
                 id="password1"
                 focusBorderColor="brand.500"
                 placeholder="Senha"
-                value={password1}
-                onChange={(e) => setPassword1(e.target.value)}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <InputRightElement display="flex" alignItems="center" h="3rem">
                 <IconButton
@@ -88,8 +116,8 @@ export default function Register() {
                 id="password2"
                 focusBorderColor="brand.500"
                 placeholder="Confirme sua senha"
-                value={password2}
-                onChange={(e) => setPassword2(e.target.value)}
+                value={rePassword}
+                onChange={(e) => setRePassword(e.target.value)}
               />
               <InputRightElement display="flex" alignItems="center" h="3rem">
                 <IconButton
@@ -107,7 +135,9 @@ export default function Register() {
           </Box>
           <Flex justifyContent="center" mt="2rem">
             <Button
-              onClick={() => registerUser(email, password1, password2)}
+              onClick={() =>
+                registerUser(name, lastName, email, password, rePassword)
+              }
               colorScheme="black"
               rounded="full"
               w="50%"

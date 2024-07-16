@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, Suspense } from "react";
+import { useState, Suspense, useEffect } from "react";
 import Orders from "@/components/Order/Orders";
 import {
   Box,
@@ -17,8 +17,16 @@ import { MdAccountCircle } from "react-icons/md";
 import { FaBoxArchive } from "react-icons/fa6";
 
 export default function Profile() {
-  const { user } = useAuth();
+  const { user, getUserInfo } = useAuth();
   const [selectedTab, setSelectedTab] = useState(0);
+
+  useEffect(() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!user) {
+      console.log("Usuário não encontrado");
+      if (accessToken) getUserInfo(accessToken);
+    }
+  }, []);
 
   return (
     <Suspense fallback={<div>Carregando...</div>}>
