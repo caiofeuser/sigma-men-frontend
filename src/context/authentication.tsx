@@ -3,8 +3,6 @@ import { useState, createContext, useEffect, useContext } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { AuthTokens, User } from "@/types";
-import axios from "axios";
-import { stat } from "fs";
 
 const BASE_URL = "http://127.0.0.1:8000";
 const BASE_FRONTEND_URL = "http://127.0.0.1:3000";
@@ -24,7 +22,7 @@ export interface AuthContextType {
     password2: string
   ) => void;
   activation: (uid: string, token: string) => void;
-  getUserInfo: (accessToken: string) => void;
+  getUserInfo: (accessToken: string) => Promise<void>;
   user: User | null;
   setUser: (user: User) => void;
   accessToken: string | null;
@@ -32,29 +30,31 @@ export interface AuthContextType {
   refreshToken: string | null;
   setRefreshToken: (token: string) => void;
   // setAuthToken: (token: AuthTokens) => void;
-  getUrlGoogle: () => void;
+  getUrlGoogle: () => Promise<{ authorization_url: string }>;
   changeUserInfo: (first_name: string, last_name: string) => void;
   // authToken: AuthTokens | null;
-  googleLoginUser: (code: string, state: string) => void;
+  googleLoginUser: (
+    code: string,
+    state: string
+  ) => Promise<{ access: string; refresh: string; user: string }>;
 }
 
 const AuthContext = createContext<AuthContextType>({
-  loginUser: async () => {},
+  loginUser: async () => Promise.resolve(),
   logoutUser: () => {},
-  registerUser: async () => {},
-  activation: async () => {},
-  getUserInfo: async () => {},
+  registerUser: async () => Promise.resolve(),
+  activation: async () => Promise.resolve(),
+  getUserInfo: async () => Promise.resolve(),
   user: null,
   setUser: () => {},
-  // setAuthToken: () => {},
   accessToken: null,
   setAccessToken: () => {},
-  getUrlGoogle: async () => {},
   refreshToken: null,
   setRefreshToken: () => {},
-  changeUserInfo: async () => {},
-  // authToken: null,
-  googleLoginUser: async () => {},
+  getUrlGoogle: async () => Promise.resolve({ authorization_url: "" }),
+  changeUserInfo: async () => Promise.resolve(),
+  googleLoginUser: async () =>
+    Promise.resolve({ access: "", refresh: "", user: "" }),
 });
 
 export default AuthContext;
@@ -67,6 +67,15 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (!user) {
+      const localUser = localStorage.getItem("user");
+      if (localUser) {
+        setUser(JSON.parse(localUser));
+      }
+    }
+  }, [user]);
 
   interface DecodedToken {
     pk: number;
@@ -141,7 +150,6 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         const isVerified = await verifyToken(access);
         if (isVerified) {
           setIsAuthenticated(true);
-          const decodedToken = jwtDecode<DecodedToken>(access);
           getUserInfo(access);
         } else if (refresh) {
           console.log("Access token expired, trying to refresh");
@@ -330,11 +338,13 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       method: "GET",
       headers: {
         Accept: "application/json",
+        "Content-Type": "application/json",
       },
       credentials: "include",
     });
 
     const data = await response.json();
+    console.log(data);
     return data;
   };
 
@@ -352,7 +362,15 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     });
 
     const data = await response.json();
-    console.log(data);
+    // console.log(data);
+    // const decodedToken = jwtDecode<DecodedToken>(data.access);
+    // console.log({
+    //   pk: decodedToken.pk,
+    //   email: decodedToken.email,
+    //   first_name: decodedToken.first_name,
+    //   last_name: decodedToken.last_name,
+    // });
+    return data;
   };
 
   const contextData: AuthContextType = {

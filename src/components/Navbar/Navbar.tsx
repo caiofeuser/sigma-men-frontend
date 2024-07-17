@@ -94,6 +94,7 @@ export default function Navbar(props: NavbarProps) {
           justifyContent: "flex-start",
           gap: "2rem",
         }}
+        onClick={() => console.log(user)}
       >
         <IconButton
           isRound={true}

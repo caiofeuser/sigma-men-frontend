@@ -36,10 +36,9 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    //@ts-ignore
     getUrlGoogle().then((data: { authorization_url: string }) => {
       const { authorization_url } = data;
-      // window.location.href = authorization_url;
+      window.location.replace(authorization_url);
       console.log(data);
     });
   };
