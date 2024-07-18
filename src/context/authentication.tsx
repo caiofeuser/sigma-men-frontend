@@ -60,7 +60,6 @@ const AuthContext = createContext<AuthContextType>({
 export default AuthContext;
 
 export const AuthWrapper = ({ children }: AuthWrapperType) => {
-  // const [authToken, setAuthToken] = useState<AuthTokens | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -76,6 +75,10 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       }
     }
   }, [user]);
+
+  useEffect(() => {
+    console.log(accessToken);
+  }, [accessToken]);
 
   interface DecodedToken {
     pk: number;
@@ -123,8 +126,8 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
           const data = await response.json();
           const newAccessToken = data.access;
           const newRefreshToken = data.refresh;
-          localStorage.setItem("accessToken", newAccessToken);
-          localStorage.setItem("refreshToken", newRefreshToken);
+          localStorage.setItem("access", newAccessToken);
+          localStorage.setItem("refresh", newRefreshToken);
           setAccessToken(newAccessToken);
           setRefreshToken(newRefreshToken);
           console.log("Token refreshed:", data);
@@ -140,24 +143,26 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     };
 
     const handleTokenVerification = async () => {
-      const access = localStorage.getItem("accessToken");
-      const refresh = localStorage.getItem("refreshToken");
+      const access = localStorage.getItem("access");
+      const refresh = localStorage.getItem("refresh");
 
       setAccessToken(access);
       setRefreshToken(refresh);
-
       if (access) {
         const isVerified = await verifyToken(access);
         if (isVerified) {
+          console.log("Access token verified");
           setIsAuthenticated(true);
           getUserInfo(access);
         } else if (refresh) {
           console.log("Access token expired, trying to refresh");
           const isRefreshed = await handleRefreshToken(refresh);
           if (isRefreshed) {
-            const newAccess = localStorage.getItem("accessToken");
+            console.log("Access token refreshed");
+            const newAccess = localStorage.getItem("access");
             if (newAccess) {
               const isNewTokenVerified = await verifyToken(newAccess);
+
               if (isNewTokenVerified) {
                 setIsAuthenticated(true);
                 const decodedToken = jwtDecode<DecodedToken>(newAccess);
@@ -168,8 +173,8 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
                   last_name: decodedToken.last_name,
                 });
               } else {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
+                localStorage.removeItem("access");
+                localStorage.removeItem("refresh");
                 setAccessToken(null);
                 setRefreshToken(null);
                 setIsAuthenticated(false);
@@ -177,24 +182,25 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
               }
             }
           } else {
-            localStorage.removeItem("accessToken");
-            localStorage.removeItem("refreshToken");
+            console.log("Refresh token expired");
+            localStorage.removeItem("access");
+            localStorage.removeItem("refresh");
             setAccessToken(null);
             setRefreshToken(null);
             setIsAuthenticated(false);
-            // router.push("/login");
+            router.push("/login");
           }
         } else {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
           setAccessToken(null);
           setRefreshToken(null);
           setIsAuthenticated(false);
           // router.push("/login");
         }
       } else {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("access");
+        localStorage.removeItem("refresh");
         setAccessToken(null);
         setRefreshToken(null);
         setIsAuthenticated(false);
@@ -243,9 +249,8 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       setRefreshToken(data.refresh);
       const decodedToken = jwtDecode<DecodedToken>(data.access);
       getUserInfo(data.access);
-      localStorage.setItem("accessToken", data.access);
-      localStorage.setItem("refreshToken", data.refresh);
-      // localStorage.setItem("user", JSON.stringify(tempUser));
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
       router.push("/");
     } else {
       alert("Usuário ou senha inválidos");
@@ -299,9 +304,8 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     setAccessToken(null);
     setRefreshToken(null);
     setUser(null);
-    localStorage.removeItem("authTokens");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     localStorage.removeItem("user");
     router.push("/");
     const response = await fetch(`${BASE_URL}/api/logout/`, {
@@ -358,7 +362,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
         Accept: "application/json",
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      credentials: "include", // Ensure cookies are sent with the request
+      credentials: "include",
     });
 
     const data = await response.json();

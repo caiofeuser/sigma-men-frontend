@@ -53,16 +53,16 @@ export default function Checkout() {
   const handleCheckout = () => {
     // setIsButtonLoading(true);
 
-    postCartCheckout(cartItems).then(
-      (data) => {
+    postCartCheckout(cartItems)
+      .then((data) => {
+        // console.log("checkout url", data.url);
         router.push(data.url);
         setIsAlreadyChecked(true);
-      },
-      (error) => {
-        console.error(error);
+      })
+      .catch((error) => {
+        // console.error(error);
         // alert("Erro ao finalizar a compra");
-      }
-    );
+      });
   };
 
   const handleCheckStatus = () => {

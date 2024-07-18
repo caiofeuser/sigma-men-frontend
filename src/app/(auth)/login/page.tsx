@@ -32,7 +32,6 @@ export default function Login() {
       password,
     });
     loginUser(email, password);
-    router.push("/");
   };
 
   const handleGoogleLogin = () => {

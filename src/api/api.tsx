@@ -32,9 +32,15 @@ const useAxios = () => {
   });
 
   axiosPrivateInstance.interceptors.request.use(async (req) => {
+    console.log(accessToken);
     if (!accessToken) {
-      // router.push("/login"); // Redireciona para a página de login se não houver token
-      throw new axios.Cancel("Unauthorized");
+      const localAccessToken = localStorage.getItem("access");
+      if (!localAccessToken) {
+        router.push("/login"); // Redireciona para a página de login se não houver token
+        throw new axios.Cancel("Unauthorized");
+      } else {
+        setAccessToken(localAccessToken);
+      }
     }
     req.headers.Authorization = `Bearer ${accessToken}`;
 
@@ -44,23 +50,16 @@ const useAxios = () => {
       return req;
     }
 
-    console.log(jwtDecode(accessToken));
-
-    const authTokenWithRefresh = JSON.parse(
-      localStorage.getItem("authTokens") ?? "{}"
-    );
-    console.log(authTokenWithRefresh);
+    const refreshToken = localStorage.getItem("refresh");
 
     try {
       const response = await axios.post(`${BASE_URL}/api/jwt/refresh/`, {
-        refresh: authTokenWithRefresh.refresh,
+        refresh: refreshToken,
       });
 
-      localStorage.setItem("accessToken", JSON.stringify(response.data.access));
-      localStorage.setItem(
-        "refreshToken",
-        JSON.stringify(response.data.refresh)
-      );
+      localStorage.setItem("access", JSON.stringify(response.data.access));
+      localStorage.setItem("refresh", JSON.stringify(response.data.refresh));
+      console.log(response.data.access);
       setAccessToken(response.data.access);
       setRefreshToken(response.data.refresh);
       getUserInfo(accessToken);

@@ -21,7 +21,7 @@ export default function Profile() {
   const [selectedTab, setSelectedTab] = useState(0);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem("access");
     if (!user) {
       console.log("Usuário não encontrado");
       if (accessToken) getUserInfo(accessToken);
