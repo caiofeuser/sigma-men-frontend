@@ -28,7 +28,18 @@ const theme = extendTheme({
       800: "#090909",
       900: "#040404",
     },
-    beige: "#F7F7F7",
+    beige: {
+      50: "#fdfdfd",
+      100: "#f7f7f7",
+      200: "#f5f5f5",
+      300: "#f1f1f1",
+      400: "#ededed",
+      500: "#e9e9e9",
+      600: "#e5e5e5",
+      700: "#e1e1e1",
+      800: "#dddddd",
+      900: "#d9d9d9",
+    },
   },
 });
 export function Providers({ children }: { children: React.ReactNode }) {
