@@ -4,7 +4,6 @@ import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
 import { CartItem } from "@/types";
-const BASE_URL = "http://127.0.0.1:8000";
 
 const useAxios = () => {
   const { accessToken, setAccessToken, setRefreshToken, getUserInfo } =
@@ -12,14 +11,14 @@ const useAxios = () => {
   const router = useRouter();
 
   const axiosPublicInstance = axios.create({
-    baseURL: `${BASE_URL}`,
+    baseURL: `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}`,
     headers: {
       "Content-Type": "application/json",
     },
   });
 
   const axiosPrivateInstance = axios.create({
-    baseURL: `${BASE_URL}`,
+    baseURL: `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}`,
     headers: {
       "Content-Type": "application/json",
     },
@@ -47,9 +46,12 @@ const useAxios = () => {
     const refreshToken = localStorage.getItem("refresh");
 
     try {
-      const response = await axios.post(`${BASE_URL}/api/jwt/refresh/`, {
-        refresh: refreshToken,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/jwt/refresh/`,
+        {
+          refresh: refreshToken,
+        }
+      );
 
       localStorage.setItem("access", JSON.stringify(response.data.access));
       localStorage.setItem("refresh", JSON.stringify(response.data.refresh));
