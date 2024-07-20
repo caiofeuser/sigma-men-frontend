@@ -2,9 +2,6 @@
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
-  basePath: "",
-  // // assetPrefix: "http://127.0.0.1:3000",
-  // assetPrefix: "https://sigma-men-frontend.vercel.app/",
   async headers() {
     return [
       {
