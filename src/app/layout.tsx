@@ -46,8 +46,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
   const { user } = useAuth();
 
   const logout = () => {
-    localStorage.removeItem("aceessToken");
-    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("aceess");
+    localStorage.removeItem("refresh");
     router.push("/");
   };
 
@@ -63,34 +63,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
     { name: "FAQ" },
     { name: "Contatos" },
   ];
-
-  // const verifyEmail = async (token: string) => {
-  //   if (accessToken) {
-  //     const response = await fetch(
-  //       `http://localhost:8000/auth_api/user/is-verified/`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     if (response.status === 400) {
-  //       setIsAlertVisible(true);
-  //       setTimeout(() => {
-  //         setIsAlertVisible(false);
-  //       }, 5000);
-  //     }
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (authToken) {
-  //     verifyEmail(authToken.access);
-  //   }
-  // }, [authToken]);
 
   return (
     <html suppressHydrationWarning={true}>

@@ -7,14 +7,8 @@ import { CartItem } from "@/types";
 const BASE_URL = "http://127.0.0.1:8000";
 
 const useAxios = () => {
-  const {
-    accessToken,
-    setAccessToken,
-    refreshToken,
-    setRefreshToken,
-    setUser,
-    getUserInfo,
-  } = useAuth();
+  const { accessToken, setAccessToken, setRefreshToken, getUserInfo } =
+    useAuth();
   const router = useRouter();
 
   const axiosPublicInstance = axios.create({
@@ -32,7 +26,6 @@ const useAxios = () => {
   });
 
   axiosPrivateInstance.interceptors.request.use(async (req) => {
-    console.log(accessToken);
     if (!accessToken) {
       const localAccessToken = localStorage.getItem("access");
       if (!localAccessToken) {
@@ -42,6 +35,7 @@ const useAxios = () => {
         setAccessToken(localAccessToken);
       }
     }
+
     req.headers.Authorization = `Bearer ${accessToken}`;
 
     //@ts-ignore
@@ -59,10 +53,11 @@ const useAxios = () => {
 
       localStorage.setItem("access", JSON.stringify(response.data.access));
       localStorage.setItem("refresh", JSON.stringify(response.data.refresh));
-      console.log(response.data.access);
       setAccessToken(response.data.access);
       setRefreshToken(response.data.refresh);
-      getUserInfo(accessToken);
+      if (accessToken) {
+        getUserInfo(accessToken);
+      }
 
       req.headers.Authorization = `Bearer ${response.data.access}`;
       return req;

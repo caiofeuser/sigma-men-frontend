@@ -148,7 +148,7 @@ export default function Navbar(props: NavbarProps) {
       >
         {pathname === "/login" ||
         pathname === "/register" ||
-        pathname === "/forgot-password" ? null : (
+        pathname === "/password-reset" ? null : (
           <>
             <MenuBasket />
             <Menu>

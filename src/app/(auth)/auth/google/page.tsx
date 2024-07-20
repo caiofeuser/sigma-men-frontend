@@ -1,32 +1,31 @@
 ﻿"use client";
-import { useEffect, Suspense, useLayoutEffect } from "react";
-import { Box, Heading, Flex, CircularProgress, Button } from "@chakra-ui/react";
+import { useEffect, Suspense, useState } from "react";
+import {
+  Box,
+  Heading,
+  Flex,
+  CircularProgress,
+  useToast,
+} from "@chakra-ui/react";
 import { useAuth } from "@/context/authentication";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import axios from "axios";
 
 export default function Google() {
-  const {
-    googleLoginUser,
-    setAccessToken,
-    setRefreshToken,
-    getUserInfo,
-    accessToken,
-    refreshToken,
-  } = useAuth();
+  const { googleLoginUser, setAccessToken, setRefreshToken, getUserInfo } =
+    useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const toast = useToast();
+  const [toastIsShowed, setToastIsShowed] = useState(false);
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
 
   useEffect(() => {
-    const code = searchParams.get("code");
-    const state = searchParams.get("state");
-
-    // Ensure code and state are available before proceeding
     if (code && state) {
       googleLoginUser(code, state)
         .then((data: { access: string; refresh: string; user: string }) => {
-          const { access, refresh, user } = data;
+          const { access, refresh } = data;
 
           localStorage.setItem("access", access);
           localStorage.setItem("refresh", refresh);
@@ -35,15 +34,31 @@ export default function Google() {
           setRefreshToken(refresh);
 
           getUserInfo(access).then(() => {
+            if (!toastIsShowed) {
+              toast({
+                title: "Login Successful",
+                description: "You have been logged in successfully.",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+              });
+            }
+            setToastIsShowed(true);
             router.push("/");
           });
         })
         .catch((error) => {
           console.error("Error during Google login:", error);
-          // Handle error, e.g., show notification to user
+          toast({
+            title: "Login Failed",
+            description: error.message || "An error occurred during login.",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          });
         });
     }
-  }, [searchParams]);
+  }, []);
 
   return (
     <Suspense fallback={<div>Carregando...</div>}>

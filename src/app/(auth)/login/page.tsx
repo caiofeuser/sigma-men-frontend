@@ -11,12 +11,15 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-  useEditable,
+  AbsoluteCenter,
+  Divider,
 } from "@chakra-ui/react";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { Icon, ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/navigation";
 import AuthContext from "@/context/authentication";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebookF } from "react-icons/fa";
 
 export default function Login() {
   const [show, setShow] = useState(false);
@@ -53,7 +56,7 @@ export default function Login() {
           mt="2rem"
         >
           <Box>
-            <Heading mb="3rem" textAlign="center" fontSize="3xl">
+            <Heading mb="2rem" textAlign="center" fontSize="2xl">
               Entre em sua conta
             </Heading>
           </Box>
@@ -61,25 +64,40 @@ export default function Login() {
             <Box>
               <Button
                 onClick={() => handleGoogleLogin()}
-                colorScheme="black"
+                colorScheme="google"
                 rounded="full"
                 w="100%"
                 fontWeight="600"
-                fontSize="1.25rem"
                 h="3rem"
                 mb="1rem"
+                leftIcon={<Icon size="1.25rem" as={FcGoogle} />}
+                textColor="black"
+                border="1px solid #d2d2d2"
               >
                 Entrar com Google
-                <Icon
-                  as={RiLoginCircleFill}
-                  size="1.25rem"
-                  color="var(--chakra-colors-brand-500)"
-                  style={{
-                    position: "absolute",
-                    right: "1rem",
-                  }}
-                />
               </Button>
+            </Box>
+            <Box>
+              <Button
+                onClick={() => handleGoogleLogin()}
+                colorScheme="facebook"
+                rounded="full"
+                w="100%"
+                fontWeight="600"
+                h="3rem"
+                mb="1rem"
+                leftIcon={
+                  <Icon color="white" size="1.25rem" as={FaFacebookF} />
+                }
+              >
+                Entre com Facebook
+              </Button>
+            </Box>
+            <Box position="relative" padding="10">
+              <Divider />
+              <AbsoluteCenter bg="white" px="4">
+                ou
+              </AbsoluteCenter>
             </Box>
             <FormControl>
               <Input
@@ -149,7 +167,7 @@ export default function Login() {
             <Box mt="0.5rem" textAlign="center">
               <Link
                 color="brand.500"
-                onClick={() => router.push("/forgot-password")}
+                onClick={() => router.push("/password-reset")}
               >
                 Esqueceu sua senha?
               </Link>

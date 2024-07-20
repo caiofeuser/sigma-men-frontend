@@ -29,14 +29,19 @@ export interface AuthContextType {
   setAccessToken: (token: string) => void;
   refreshToken: string | null;
   setRefreshToken: (token: string) => void;
-  // setAuthToken: (token: AuthTokens) => void;
   getUrlGoogle: () => Promise<{ authorization_url: string }>;
   changeUserInfo: (first_name: string, last_name: string) => void;
-  // authToken: AuthTokens | null;
   googleLoginUser: (
     code: string,
     state: string
   ) => Promise<{ access: string; refresh: string; user: string }>;
+  resetPassword: (email: string) => Promise<Response>;
+  passwordRessetConfirmation: (
+    uid: string,
+    token: string,
+    password: string,
+    re_password: string
+  ) => Promise<Response>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -55,6 +60,8 @@ const AuthContext = createContext<AuthContextType>({
   changeUserInfo: async () => Promise.resolve(),
   googleLoginUser: async () =>
     Promise.resolve({ access: "", refresh: "", user: "" }),
+  resetPassword: async (email: string) => Promise.resolve(new Response()),
+  passwordRessetConfirmation: async () => Promise.resolve(new Response()),
 });
 
 export default AuthContext;
@@ -76,10 +83,6 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log(accessToken);
-  }, [accessToken]);
-
   interface DecodedToken {
     pk: number;
     email: string;
@@ -90,13 +93,16 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   useEffect(() => {
     const verifyToken = async (token: string) => {
       try {
-        const response = await fetch(`${BASE_URL}/api/jwt/verify/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token }),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/jwt/verify/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ token }),
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -114,13 +120,16 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
 
     const handleRefreshToken = async (refreshToken: string) => {
       try {
-        const response = await fetch(`${BASE_URL}/api/jwt/refresh/`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refresh: refreshToken }),
-        });
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/jwt/refresh/`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ refresh: refreshToken }),
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
@@ -214,13 +223,16 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   }, []);
 
   const getUserInfo = async (accessToken: string) => {
-    const response = await fetch(`${BASE_URL}/api/users/me/`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/users/me/`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     const data = await response.json();
     if (response.status === 200) {
@@ -232,14 +244,17 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const loginUser = async (email: string, password: string) => {
-    const response = await fetch(`${BASE_URL}/api/jwt/create/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ email, password }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/jwt/create/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      }
+    );
 
     const data = await response.json();
 
@@ -271,14 +286,17 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
       password,
       re_password,
     });
-    const response = await fetch(`${BASE_URL}/api/users/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: body,
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/users/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: body,
+      }
+    );
 
     const data = await response.json();
 
@@ -288,14 +306,17 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const activation = async (uid: string, token: string) => {
-    const response = await fetch(`${BASE_URL}/api/users/activation/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ uid, token }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/users/activation/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ uid, token }),
+      }
+    );
 
     return response;
   };
@@ -308,25 +329,34 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     localStorage.removeItem("refresh");
     localStorage.removeItem("user");
     router.push("/");
-    const response = await fetch(`${BASE_URL}/api/logout/`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/logout/`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        credentials: "include",
+      }
+    );
+
+    router.push("/");
   };
 
   const changeUserInfo = async (first_name: string, last_name: string) => {
     console.log(accessToken);
-    const response = await fetch(`${BASE_URL}/api/users/me/`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({ first_name, last_name }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/users/me/`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ first_name, last_name }),
+      }
+    );
 
     const data = await response.json();
     if (response.status === 200) {
@@ -337,7 +367,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const getUrlGoogle = async () => {
-    const url = `${BASE_URL}/api/o/google-oauth2/?redirect_uri=${BASE_FRONTEND_URL}/auth/google`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/o/google-oauth2/?redirect_uri=${process.env.NEXT_PUBLIC_BASE_URL_FRONTEND}/auth/google`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -353,7 +383,9 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const googleLoginUser = async (code: string, state: string) => {
-    const url = `${BASE_URL}/api/o/google-oauth2/?state=${encodeURIComponent(
+    const url = `${
+      process.env.NEXT_PUBLIC_BASE_URL_BACKEND
+    }/api/o/google-oauth2/?state=${encodeURIComponent(
       state
     )}&code=${encodeURIComponent(code)}`;
     const response = await fetch(url, {
@@ -366,15 +398,43 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     });
 
     const data = await response.json();
-    // console.log(data);
-    // const decodedToken = jwtDecode<DecodedToken>(data.access);
-    // console.log({
-    //   pk: decodedToken.pk,
-    //   email: decodedToken.email,
-    //   first_name: decodedToken.first_name,
-    //   last_name: decodedToken.last_name,
-    // });
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Google login failed");
+    }
+
     return data;
+  };
+
+  const resetPassword = async (email: string) => {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/users/reset_password/`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    return response;
+  };
+
+  const passwordRessetConfirmation = async (
+    uid: string,
+    token: string,
+    new_password: string,
+    re_new_password: string
+  ) => {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/users/reset_password_confirm/`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ uid, token, new_password, re_new_password }),
+    });
+
+    return response;
   };
 
   const contextData: AuthContextType = {
@@ -390,10 +450,10 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     refreshToken,
     setRefreshToken,
     getUrlGoogle,
-    // authToken: authToken as AuthTokens,
-    // setAuthToken,
+    resetPassword,
     changeUserInfo,
     googleLoginUser,
+    passwordRessetConfirmation,
   };
 
   return (

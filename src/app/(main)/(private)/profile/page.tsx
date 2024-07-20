@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, Suspense, useEffect } from "react";
+import { useState, Suspense } from "react";
 import Orders from "@/components/Order/Orders";
 import {
   Box,
@@ -17,16 +17,14 @@ import { MdAccountCircle } from "react-icons/md";
 import { FaBoxArchive } from "react-icons/fa6";
 
 export default function Profile() {
-  const { user, getUserInfo } = useAuth();
+  const { user, changeUserInfo } = useAuth();
   const [selectedTab, setSelectedTab] = useState(0);
+  const [currentUser, setCurrentUser] = useState<User>(user || ({} as User));
 
-  useEffect(() => {
-    const accessToken = localStorage.getItem("access");
-    if (!user) {
-      console.log("Usuário não encontrado");
-      if (accessToken) getUserInfo(accessToken);
-    }
-  }, []);
+  const handleUserInfoChange = (newUserInfo: User) => {
+    changeUserInfo(newUserInfo.first_name, newUserInfo.last_name);
+    setCurrentUser(newUserInfo);
+  };
 
   return (
     <Suspense fallback={<div>Carregando...</div>}>
@@ -87,7 +85,14 @@ export default function Profile() {
           flexGrow="1"
           borderRadius="2rem"
         >
-          {selectedTab === 0 ? <UserInfo user={user as User} /> : <Orders />}
+          {selectedTab === 0 ? (
+            <UserInfo
+              user={currentUser || user}
+              onUserInfoChange={handleUserInfoChange}
+            />
+          ) : (
+            <Orders />
+          )}
         </Box>
       </Flex>
     </Suspense>
