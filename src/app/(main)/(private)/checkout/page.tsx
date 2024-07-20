@@ -51,22 +51,18 @@ export default function Checkout() {
   const router = useRouter();
 
   const handleCheckout = () => {
-    // setIsButtonLoading(true);
-
     postCartCheckout(cartItems)
       .then((data) => {
-        // console.log("checkout url", data.url);
         router.push(data.url);
         setIsAlreadyChecked(true);
       })
       .catch((error) => {
-        // console.error(error);
-        // alert("Erro ao finalizar a compra");
+        console.error(error);
+        alert("Erro ao finalizar a compra");
       });
   };
 
   const handleCheckStatus = () => {
-    // checkout?success=true&session_id=cs_test_b105dqvnclgeFIeHPTXbpPVIayovVhGcduMiaZeEp4k6O5npcmeDGEIofn
     const isSuccessful = searchParams.get("success") === "true";
     const isCanceled = searchParams.get("canceled") === "true";
     const sessionID = searchParams.get("session_id");
@@ -98,7 +94,7 @@ export default function Checkout() {
                 <TableContainer w="100%">
                   <Table variant="simple">
                     <TableCaption>
-                      Confira a quantiade dos items comprados
+                      Confira a quantidade dos items comprados
                     </TableCaption>
                     <Thead>
                       <Tr>

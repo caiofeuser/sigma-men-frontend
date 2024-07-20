@@ -12,7 +12,7 @@ export default function ProtectedRoutes({ children }: FooterProps) {
   const router = useRouter();
 
   if (!user) {
-    // router.push("/login");
+    router.push("/login");
     return null;
   }
 
