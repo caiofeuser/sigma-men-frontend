@@ -4,9 +4,6 @@ import { jwtDecode } from "jwt-decode";
 import { useRouter } from "next/navigation";
 import { AuthTokens, User } from "@/types";
 
-const BASE_URL = "http://127.0.0.1:8000";
-const BASE_FRONTEND_URL = "http://127.0.0.1:3000";
-
 interface AuthWrapperType {
   children: React.ReactNode;
 }
