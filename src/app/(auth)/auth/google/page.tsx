@@ -73,7 +73,7 @@ export default function Google() {
         >
           <Box mb="2rem">
             <Heading mb="1rem" textAlign="center" fontSize="3xl">
-              Agurade um momento
+              Aguarde um momento
             </Heading>
           </Box>
           <Flex justifyContent="center" alignItems="center">
