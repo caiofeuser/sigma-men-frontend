@@ -1,5 +1,5 @@
 ﻿"use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Box,
   Flex,
@@ -9,16 +9,18 @@ import {
   IconButton,
   Input,
   Divider,
+  Button,
 } from "@chakra-ui/react";
 import { FaUser } from "react-icons/fa";
 import { User } from "@/types";
-import { useAuth } from "@/context/authentication";
 import { EditIcon } from "@chakra-ui/icons";
 
-export default function UserInfo(props: { user: User }) {
+export default function UserInfo(props: {
+  user: User;
+  onUserInfoChange: (newUserInfo: User) => void;
+}) {
+  const { user, onUserInfoChange } = props;
   const [isEditing, setIsEditing] = useState(false);
-  const { changeUserInfo } = useAuth();
-  const { user } = props;
   const [newUserInfo, setNewUserInfo] = useState<User>({ ...user });
 
   const handleInputChange = (field: keyof User, value: string | number) => {
@@ -28,15 +30,10 @@ export default function UserInfo(props: { user: User }) {
     }));
   };
 
-  useEffect(() => {
-    if (!isEditing) {
-      changeUserInfo(
-        newUserInfo.first_name,
-        newUserInfo.last_name,
-        newUserInfo?.age || 0
-      );
-    }
-  }, [isEditing]);
+  const handleSaveNewUserInfo = () => {
+    onUserInfoChange(newUserInfo);
+    setIsEditing(false);
+  };
 
   return (
     <Box w="80%" mt="2rem" p="2rem" textAlign="center">
@@ -47,7 +44,6 @@ export default function UserInfo(props: { user: User }) {
         </Heading>
       </Flex>
       <Flex
-        // bg="gray.100"
         borderColor="gray.200"
         borderWidth="1px"
         borderRadius="2rem"
@@ -103,15 +99,25 @@ export default function UserInfo(props: { user: User }) {
           </Text>
         </Flex>
         <Box textAlign="right">
-          <IconButton
-            aria-label="Editar"
-            colorScheme="brand"
-            rounded="full"
-            onClick={() => setIsEditing(!isEditing)}
-            icon={<EditIcon />}
-          >
-            {isEditing ? "Salvar" : "Alterar"}
-          </IconButton>
+          {isEditing ? (
+            <Button
+              colorScheme="brand"
+              rounded="full"
+              onClick={handleSaveNewUserInfo}
+            >
+              Salvar
+            </Button>
+          ) : (
+            <IconButton
+              aria-label="Editar"
+              colorScheme="brand"
+              rounded="full"
+              onClick={() => setIsEditing(!isEditing)}
+              icon={<EditIcon />}
+            >
+              {isEditing ? "Salvar" : "Alterar"}
+            </IconButton>
+          )}
         </Box>
       </Flex>
     </Box>

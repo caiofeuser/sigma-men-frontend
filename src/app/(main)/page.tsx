@@ -1,5 +1,4 @@
 "use client";
-import { Inter } from "next/font/google";
 import { Box, Heading, Flex, Text } from "@chakra-ui/react";
 import BannerHero from "@/components/MainPage/BannerHero";
 import Carrosel from "@/components/MainPage/Carrosel";
@@ -7,7 +6,7 @@ import TreatmentCard from "@/components/MainPage/TreatmentCard";
 import ProductCard from "@/components/MainPage/ProductCard";
 import Question from "@/components/MainPage/Question";
 import { useNavbarContext } from "@/context/navbar";
-import { useEffect, useRef, useState, Fragment } from "react";
+import { useEffect, useRef, useState, Suspense } from "react";
 import useAxios from "@/api/api";
 import { ProductType } from "@/types";
 
@@ -72,7 +71,7 @@ export default function Home() {
     },
   ];
   return (
-    <>
+    <Suspense fallback={<div>Carregando...</div>}>
       <BannerHero />
       <Carrosel
         //@ts-ignore
@@ -127,6 +126,6 @@ export default function Home() {
           </Box>
         </div>
       </Box>
-    </>
+    </Suspense>
   );
 }

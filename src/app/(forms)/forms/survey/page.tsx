@@ -14,6 +14,7 @@ import useAxios from "@/api/api";
 import { useFormsIndex, FormsIndexContextType } from "@/context/forms";
 import { OptionType, QuestionsType } from "@/types/index";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 
 export default function Survey() {
   const [radioValue, setRadioValue] = useState<string>("");
@@ -77,62 +78,64 @@ export default function Survey() {
   //  }, [radioValue]);
 
   return (
-    <Flex
-      flexDir="column"
-      alignItems="center"
-      bg="beige.100"
-      onClick={() => console.log(questions)}
-    >
+    <Suspense fallback={<div>Carregando...</div>}>
       <Flex
         flexDir="column"
-        bg="white"
-        borderRadius="2rem"
-        minW="600px"
-        height="55%"
-        w="80%"
-        p="4rem"
-        my="4rem"
+        alignItems="center"
+        bg="beige.100"
+        onClick={() => console.log(questions)}
       >
-        <Text textAlign="center" fontSize="xl" as="b">
-          {selectedQuestion?.question}
-        </Text>
-        <Flex mt={12}>
-          <RadioGroup
-            width="full"
-            onChange={(value) => {
-              setRadioValue(value);
-              handleClickRadio(value); // Call handleClickRadio when radio value changes
-            }}
-            value={radioValue}
-            display="flex"
-            flexDir="column"
-            rowGap={8}
-          >
-            {selectedQuestion?.options.map((option) => (
-              <Box
-                key={option.id}
-                bg="beige.100"
-                _hover={{
-                  background: "var(--chakra-colors-beige-400)",
-                }}
-                width="full"
-                height="full"
-                borderRadius="2xl"
-              >
-                <Radio
-                  colorScheme="brand"
+        <Flex
+          flexDir="column"
+          bg="white"
+          borderRadius="2rem"
+          minW="600px"
+          height="55%"
+          w="80%"
+          p="4rem"
+          my="4rem"
+        >
+          <Text textAlign="center" fontSize="xl" as="b">
+            {selectedQuestion?.question}
+          </Text>
+          <Flex mt={12}>
+            <RadioGroup
+              width="full"
+              onChange={(value) => {
+                setRadioValue(value);
+                handleClickRadio(value); // Call handleClickRadio when radio value changes
+              }}
+              value={radioValue}
+              display="flex"
+              flexDir="column"
+              rowGap={8}
+            >
+              {selectedQuestion?.options.map((option) => (
+                <Box
+                  key={option.id}
+                  bg="beige.100"
+                  _hover={{
+                    background: "var(--chakra-colors-beige-400)",
+                  }}
                   width="full"
                   height="full"
-                  p={6}
-                  value={option.id.toString()}
+                  borderRadius="2xl"
                 >
-                  <Text fontSize="large">{option.option}</Text>
-                </Radio>
-              </Box>
-            ))}
-          </RadioGroup>
+                  <Radio
+                    colorScheme="brand"
+                    width="full"
+                    height="full"
+                    p={6}
+                    value={option.id.toString()}
+                  >
+                    <Text fontSize="large">{option.option}</Text>
+                  </Radio>
+                </Box>
+              ))}
+            </RadioGroup>
+          </Flex>
         </Flex>
       </Flex>
-    </Flex>
+    </Suspense>
   );
 }

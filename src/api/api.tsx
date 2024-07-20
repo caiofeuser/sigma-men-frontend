@@ -1,83 +1,75 @@
-﻿// const authTokenWithRefresh = JSON.parse(localStorage.getItem("authTokens"));
-// console.log(authTokenWithRefresh);
-
-// try {
-//   const response = await axios.post(
-//     "http://localhost:8000/auth_api/token/refresh/",
-//     {
-//       refresh: authTokenWithRefresh.refresh,
-//     }
-//   );
-
-import { CartItem, PurchaseObject } from "@/types";
-import axios from "axios";
+﻿import axios from "axios";
 import dayjs from "dayjs";
 import { jwtDecode } from "jwt-decode";
 import { useAuth } from "@/context/authentication";
 import { useRouter } from "next/navigation";
-
-interface AuthTokens {
-  access: string;
-  refresh: string;
-}
+import { CartItem } from "@/types";
+const BASE_URL = "http://127.0.0.1:8000";
 
 const useAxios = () => {
-  const { authToken, setAuthToken, setUser } = useAuth();
+  const { accessToken, setAccessToken, setRefreshToken, getUserInfo } =
+    useAuth();
   const router = useRouter();
 
   const axiosPublicInstance = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: `${BASE_URL}`,
     headers: {
       "Content-Type": "application/json",
     },
   });
 
   const axiosPrivateInstance = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: `${BASE_URL}`,
     headers: {
       "Content-Type": "application/json",
     },
   });
 
   axiosPrivateInstance.interceptors.request.use(async (req) => {
-    if (!authToken) {
-      router.push("/login"); // Redireciona para a página de login se não houver token
-      throw new axios.Cancel("Unauthorized");
+    if (!accessToken) {
+      const localAccessToken = localStorage.getItem("access");
+      if (!localAccessToken) {
+        router.push("/login"); // Redireciona para a página de login se não houver token
+        throw new axios.Cancel("Unauthorized");
+      } else {
+        setAccessToken(localAccessToken);
+      }
     }
 
-    const isExpired =
-      dayjs.unix(jwtDecode(authToken.access).exp).diff(dayjs()) < 1;
+    req.headers.Authorization = `Bearer ${accessToken}`;
+
+    //@ts-ignore
+    const isExpired = dayjs.unix(jwtDecode(accessToken).exp).diff(dayjs()) < 1;
     if (!isExpired) {
-      req.headers.Authorization = `Bearer ${authToken.access}`;
       return req;
     }
 
-    const authTokenWithRefresh = JSON.parse(localStorage.getItem("authTokens"));
-    console.log(authTokenWithRefresh);
+    const refreshToken = localStorage.getItem("refresh");
 
     try {
-      const response = await axios.post(
-        "http://localhost:8000/auth_api/token/refresh/",
-        {
-          refresh: authTokenWithRefresh.refresh,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/api/jwt/refresh/`, {
+        refresh: refreshToken,
+      });
 
-      localStorage.setItem("authTokens", JSON.stringify(response.data));
-      setAuthToken(response.data);
-      setUser(jwtDecode(response.data.access));
+      localStorage.setItem("access", JSON.stringify(response.data.access));
+      localStorage.setItem("refresh", JSON.stringify(response.data.refresh));
+      setAccessToken(response.data.access);
+      setRefreshToken(response.data.refresh);
+      if (accessToken) {
+        getUserInfo(accessToken);
+      }
 
       req.headers.Authorization = `Bearer ${response.data.access}`;
       return req;
     } catch (error) {
-      router.push("/login"); // Redireciona para a página de login se a renovação do token falhar
+      // router.push("/login"); // Redireciona para a página de login se a renovação do token falhar
       throw new axios.Cancel("Unauthorized");
     }
   });
 
-  const postCartCheckout = async (purchase: PurchaseObject) => {
+  const postCartCheckout = async (cartItems: CartItem[]) => {
     //@ts-ignore
-    const formatedData = purchase.cartItems.map((item) => ({
+    const formatedData = cartItems.map((item) => ({
       price_id: item.stripeID,
       quantity: item.quantity,
     }));
@@ -158,7 +150,6 @@ const useAxios = () => {
       throw error;
     }
   };
-
   const getProductsFilteredOnResult = async (
     survey_name: string,
     track_id: number

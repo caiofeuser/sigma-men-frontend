@@ -1,12 +1,13 @@
 ﻿"use client";
+import { Box, Flex, Text, Heading, Button } from "@chakra-ui/react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { Box, Flex, Text, Heading } from "@chakra-ui/react";
-import { useSearchParams } from "next/navigation";
-import { useAuth } from "@/context/authentication";
+// const key = params.get("key") || "";
 import "./success.css";
 
 export default function VerifyEmail() {
   const params = useSearchParams();
+  const router = useRouter();
 
   const key = params.get("key") || "";
 
@@ -40,7 +41,7 @@ export default function VerifyEmail() {
             gap={5}
           >
             <Heading mb="2rem" textAlign="center" fontSize="3xl">
-              Enviamos uma e-mail para você!
+              Email confirmado!
             </Heading>
             <Flex
               gap={1}
@@ -49,15 +50,14 @@ export default function VerifyEmail() {
               justifyContent="center"
               mb={4}
             >
-              <Text fontSize="md">
-                Clique no link que foi enviado para confirmar seu e-mail.
-              </Text>
-              <Text fontSize="sm" color="black.100">
-                Caso demore mais do que o esperado, entre em contato com nosso
-                suporte.
-              </Text>
+              <CheckIcon />
+              <Button
+                colorScheme="brand"
+                onClick={() => router.push("/choose-username")}
+              >
+                Faça login
+              </Button>
             </Flex>
-            <CheckIcon />
           </Flex>
         </Box>
       </Flex>

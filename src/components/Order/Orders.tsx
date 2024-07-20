@@ -4,7 +4,7 @@ import {
   Box,
   Flex,
   Heading,
-  Button,
+  Spinner,
   Icon,
   Divider,
   Collapse,
@@ -24,11 +24,13 @@ export default function Orders() {
   const pathname = usePathname();
   const { getOrders } = useAxios();
   const [orders, setOrders] = useState<OrderType[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getOrders().then(
       (response) => {
         setOrders(response.data);
+        setIsLoading(false);
       },
       (error) => {
         console.error(error);
@@ -67,9 +69,23 @@ export default function Orders() {
         </Grid>
       </Flex>
       <Flex p="2rem" pt="0" flexDir="column" rowGap={4}>
-        {orders?.map((order: OrderType, index: number) => (
-          <Order key={index} order={order} />
-        ))}
+        {isLoading ? (
+          <Flex
+            mt="5rem"
+            justifyContent="center"
+            alignItems="center"
+            width="100%"
+          >
+            <Spinner color="brand.500" size="xl" thickness="4px" />
+          </Flex>
+        ) : (
+          <>
+            {orders?.map((order: OrderType, index: number) => (
+              // @ts-ignore
+              <Order key={index} order={order} />
+            ))}
+          </>
+        )}
       </Flex>
     </Box>
   );

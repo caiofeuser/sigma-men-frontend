@@ -31,7 +31,7 @@ interface NavbarProps {
 export default function Navbar(props: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, logoutUser, authToken } = useAuth() as AuthContextType;
+  const { user, logoutUser } = useAuth() as AuthContextType;
   const { isNavbarVisible } = useNavbarContext();
 
   const menuItems = [
@@ -85,7 +85,6 @@ export default function Navbar(props: NavbarProps) {
         boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
       }} // Adiciona uma cor de fundo (altere conforme necessário)
       suppressHydrationWarning
-      onClick={() => console.log(authToken)}
     >
       <div
         style={{
@@ -95,6 +94,7 @@ export default function Navbar(props: NavbarProps) {
           justifyContent: "flex-start",
           gap: "2rem",
         }}
+        onClick={() => console.log(user)}
       >
         <IconButton
           isRound={true}
@@ -148,7 +148,7 @@ export default function Navbar(props: NavbarProps) {
       >
         {pathname === "/login" ||
         pathname === "/register" ||
-        pathname === "/forgot-password" ? null : (
+        pathname === "/password-reset" ? null : (
           <>
             <MenuBasket />
             <Menu>
