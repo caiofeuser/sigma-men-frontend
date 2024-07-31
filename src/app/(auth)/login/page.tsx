@@ -27,7 +27,7 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const router = useRouter();
   //@ts-ignore
-  const { loginUser, getUrlGoogle } = useContext(AuthContext);
+  const { loginUser, getUrlGoogle, getUrlFacebook } = useContext(AuthContext);
 
   const handleSubmit = () => {
     console.log({
@@ -39,6 +39,14 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     getUrlGoogle().then((data: { authorization_url: string }) => {
+      const { authorization_url } = data;
+      window.location.replace(authorization_url);
+      console.log(data);
+    });
+  };
+
+  const handleFacebookLogin = () => {
+    getUrlFacebook().then((data: { authorization_url: string }) => {
       const { authorization_url } = data;
       window.location.replace(authorization_url);
       console.log(data);
@@ -79,7 +87,7 @@ export default function Login() {
             </Box>
             <Box>
               <Button
-                onClick={() => handleGoogleLogin()}
+                onClick={() => handleFacebookLogin()}
                 colorScheme="facebook"
                 rounded="full"
                 w="100%"

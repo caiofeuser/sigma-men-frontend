@@ -32,6 +32,11 @@ export interface AuthContextType {
     code: string,
     state: string
   ) => Promise<{ access: string; refresh: string; user: string }>;
+  getUrlFacebook: () => Promise<{ authorization_url: string }>;
+  facebookLoginUser: (
+    code: string,
+    state: string
+  ) => Promise<{ access: string; refresh: string; user: string }>;
   resetPassword: (email: string) => Promise<Response>;
   passwordRessetConfirmation: (
     uid: string,
@@ -57,6 +62,10 @@ const AuthContext = createContext<AuthContextType>({
   changeUserInfo: async () => Promise.resolve(),
   googleLoginUser: async () =>
     Promise.resolve({ access: "", refresh: "", user: "" }),
+  getUrlFacebook: async () => Promise.resolve({ authorization_url: "" }),
+  facebookLoginUser: async () =>
+    Promise.resolve({ access: "", refresh: "", user: "" }),
+
   resetPassword: async (email: string) => Promise.resolve(new Response()),
   passwordRessetConfirmation: async () => Promise.resolve(new Response()),
 });
@@ -375,7 +384,6 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     });
 
     const data = await response.json();
-    console.log(data);
     return data;
   };
 
@@ -398,6 +406,45 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
 
     if (!response.ok) {
       throw new Error(data.detail || "Google login failed");
+    }
+
+    return data;
+  };
+
+  const getUrlFacebook = async () => {
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/o/facebook/?redirect_uri=${process.env.NEXT_PUBLIC_BASE_URL_FRONTEND}/auth/google`;
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+    return data;
+  };
+
+  const facebookLoginUser = async (code: string, state: string) => {
+    const url = `${
+      process.env.NEXT_PUBLIC_BASE_URL_BACKEND
+    }/api/o/facebook/?state=${encodeURIComponent(
+      state
+    )}&code=${encodeURIComponent(code)}`;
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || "Facebook login failed");
     }
 
     return data;
@@ -450,6 +497,8 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
     resetPassword,
     changeUserInfo,
     googleLoginUser,
+    facebookLoginUser,
+    getUrlFacebook,
     passwordRessetConfirmation,
   };
 
