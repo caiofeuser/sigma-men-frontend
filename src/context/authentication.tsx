@@ -412,7 +412,7 @@ export const AuthWrapper = ({ children }: AuthWrapperType) => {
   };
 
   const getUrlFacebook = async () => {
-    const url = `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/o/facebook/?redirect_uri=${process.env.NEXT_PUBLIC_BASE_URL_FRONTEND}/auth/google`;
+    const url = `${process.env.NEXT_PUBLIC_BASE_URL_BACKEND}/api/o/facebook/?redirect_uri=${process.env.NEXT_PUBLIC_BASE_URL_FRONTEND}/auth/facebook`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
